@@ -1,5 +1,7 @@
 # Fixed Assets Subledger (Oracle Fusion 25C)
 
+[![Oracle 25C Docs](https://img.shields.io/badge/Oracle-25C_Docs-red)](https://www.oracle.com/webfolder/technetwork/tutorials/tutorial/cloud/r13/wn/ERP/releases/25C/25C-erp-wn.htm)
+
 ## Purpose
 Subledger-only star schema for Oracle Fusion **Fixed Assets** (25C). Source = BI Publisher (OTBI) → CSV → Power BI today; later pivot to BICC → Fabric with the same column contracts.
 
@@ -121,3 +123,14 @@ Column names/types live in `contracts/*.yml` and are the source of truth. Update
 - Anchored on **25C**. On quarterly updates (25D/26A…), diff What's New, update contracts first.
 
 License: MIT (or org standard).
+
+## References
+
+- [Oracle Fusion Cloud Applications — What's New 25C](https://www.oracle.com/webfolder/technetwork/tutorials/tutorial/cloud/r13/wn/ERP/releases/25C/25C-erp-wn.htm)  
+  (Quarterly update, including Fixed Assets changes)
+
+- [Oracle Help Center — ERP Cloud: Fixed Assets](https://docs.oracle.com/en/cloud/saas/financials/25c/fausi/index.html)  
+  (User & Implementation guides for Fixed Assets, release 25C)
+
+- [Oracle Help Center — BI Publisher Reports for Financials](https://docs.oracle.com/en/cloud/saas/financials/25c/faugl/bip-reports.html)  
+  (Reference for OTBI subject areas & BI Publisher extracts)
