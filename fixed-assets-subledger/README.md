@@ -29,14 +29,81 @@ Later: Fusion BICC (PVO extracts) → Fabric Lakehouse → same model
 
 **Dimensions**: D_Asset (FA_ADDITIONS_B), D_Book (FA_BOOKS), D_Category, D_Location, D_Time (with FA calendar map), **D_COA (PK = CODE_COMBINATION_ID)**.
 
-## ERD (ASCII)
-```
+### Transaction Grain Toggle
+This repo ships **both** variants. Pick one for your model:
 
-D\_COA (CODE\_COMBINATION\_ID) <— F\_Asset\_Transaction —> D\_Asset, D\_Book, D\_Time(TRX\_DATE)
+- **Header grain (default):** `sql/bip/fa_transactions_header.sql`, contract `contracts/fa_transactions.yml`, file `fa_transactions_{yyyymm}.csv`.
+  - Pros: fewer rows, fast. Cons: if a single transaction splits across accounts, you lose distribution detail.
+- **Distribution grain:** `sql/bip/fa_transactions_distribution.sql`, contract `contracts/fa_transactions_distribution.yml`, file `fa_transactions_distribution_{yyyymm}.csv`.
+  - Pros: exact account splits per transaction via `CODE_COMBINATION_ID`. Cons: more rows.
+- **Keys:** Header PK = `TRANSACTION_HEADER_ID`. Distribution PK = `[TRANSACTION_HEADER_ID, CODE_COMBINATION_ID]` (plus `DISTRIBUTION_LINE_NUMBER` for traceability).
 
-F\_Depreciation\_Period —> D\_Asset, D\_Book, D\_Time(PERIOD\_COUNTER)
-F\_Asset\_Balance\_Period —> D\_Asset, D\_Book, D\_Time(PERIOD\_COUNTER)
+> In Power BI, use one or the other as `F_Asset_Transaction`. Relationships remain the same (COA by `CODE_COMBINATION_ID`).
 
+## ERD (Mermaid)
+```mermaid
+erDiagram
+  D_COA ||--o{ F_Asset_Transaction : has
+  D_Asset ||--o{ F_Asset_Transaction : has
+  D_Book ||--o{ F_Asset_Transaction : has
+  D_Time ||--o{ F_Asset_Transaction : has
+
+  D_Asset ||--o{ F_Depreciation_Period : has
+  D_Book  ||--o{ F_Depreciation_Period : has
+  D_Time  ||--o{ F_Depreciation_Period : has
+
+  D_Asset ||--o{ F_Asset_Balance_Period : has
+  D_Book  ||--o{ F_Asset_Balance_Period : has
+  D_Time  ||--o{ F_Asset_Balance_Period : has
+
+  F_Asset_Transaction {
+    NUMBER TRANSACTION_HEADER_ID PK
+    VARCHAR TRANSACTION_TYPE_CODE
+    DATE TRX_DATE
+    NUMBER ASSET_ID FK
+    VARCHAR ASSET_NUMBER
+    VARCHAR BOOK_TYPE_CODE FK
+    NUMBER CODE_COMBINATION_ID FK
+    NUMBER COST_DELTA
+    NUMBER DEPRN_RESERVE_DELTA
+    NUMBER PROCEEDS
+    NUMBER GAIN_LOSS
+    NUMBER UNITS_DELTA
+  }
+
+  F_Depreciation_Period {
+    NUMBER ASSET_ID FK
+    VARCHAR BOOK_TYPE_CODE FK
+    NUMBER PERIOD_COUNTER
+    VARCHAR PERIOD_NAME
+    NUMBER DEPRN_AMOUNT
+    NUMBER DEPRN_BONUS
+    NUMBER DEPRN_CATCHUP
+    NUMBER DEPRN_YTD
+    NUMBER DEPRN_ITD
+  }
+
+  F_Asset_Balance_Period {
+    NUMBER ASSET_ID FK
+    VARCHAR BOOK_TYPE_CODE FK
+    NUMBER PERIOD_COUNTER
+    VARCHAR PERIOD_NAME
+    NUMBER COST_BEG
+    NUMBER ADDITIONS
+    NUMBER ADJUSTMENTS
+    NUMBER TRANSFERS_NET
+    NUMBER RETIREMENTS_COST
+    NUMBER DEPRN_PERIOD
+    NUMBER DEPRN_YTD
+    NUMBER DEPRN_ITD
+    NUMBER NBV_END
+    NUMBER UNITS
+  }
+
+  D_COA {
+    NUMBER CODE_COMBINATION_ID PK
+    -- Additional COA attributes/hierarchies live in your governed model
+  }
 ```
 
 ## Contracts-first
