@@ -108,6 +108,10 @@ erDiagram
   }
 ```
 
+## Bus Matrix (Kimball)
+This repo follows a **bus architecture** with conformed dimensions across facts.  
+See **[docs/bus-matrix.md](docs/bus-matrix.md)** for the Fixed Assets matrix and **[docs/bus-matrix-template.md](docs/bus-matrix-template.md)** to extend into other finance domains.
+
 ## Contracts-first
 Column names/types live in `contracts/*.yml` and are the source of truth. Update contracts → SQL → PBI (in that order). CI validates contracts.
 

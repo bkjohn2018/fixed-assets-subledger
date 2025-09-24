@@ -10,3 +10,5 @@ jobs:
       - uses: actions/setup-python@v5
       - run: python -m pip install pyyaml
       - run: python scripts/validate_contracts.py
+      - name: Check docs presence
+        run: python scripts/check_docs.py
