@@ -126,11 +126,16 @@ License: MIT (or org standard).
 
 ## References
 
-- [Oracle Fusion Cloud Applications — What's New 25C](https://www.oracle.com/webfolder/technetwork/tutorials/tutorial/cloud/r13/wn/ERP/releases/25C/25C-erp-wn.htm)  
-  (Quarterly update, including Fixed Assets changes)
+- **Current Release (25C)**  
+  [Oracle Fusion Cloud Applications — What's New 25C](https://www.oracle.com/webfolder/technetwork/tutorials/tutorial/cloud/r13/wn/ERP/releases/25C/25C-erp-wn.htm)  
+  [Oracle Help Center — ERP Cloud: Fixed Assets 25C](https://docs.oracle.com/en/cloud/saas/financials/25c/fausi/index.html)
 
-- [Oracle Help Center — ERP Cloud: Fixed Assets](https://docs.oracle.com/en/cloud/saas/financials/25c/fausi/index.html)  
-  (User & Implementation guides for Fixed Assets, release 25C)
+- **Next Release (26A, placeholder)**  
+  ⚠️ Link will be live only once Oracle posts 26A.  
+  [Oracle Fusion Cloud Applications — What's New 26A](https://www.oracle.com/webfolder/technetwork/tutorials/tutorial/cloud/r13/wn/ERP/releases/26A/26A-erp-wn.htm)  
+  [Oracle Help Center — ERP Cloud: Fixed Assets 26A](https://docs.oracle.com/en/cloud/saas/financials/26a/fausi/index.html)
 
-- [Oracle Help Center — BI Publisher Reports for Financials](https://docs.oracle.com/en/cloud/saas/financials/25c/faugl/bip-reports.html)  
-  (Reference for OTBI subject areas & BI Publisher extracts)
+- **General References**  
+  - [BI Publisher Reports for Financials (25C)](https://docs.oracle.com/en/cloud/saas/financials/25c/faugl/bip-reports.html)
+
+*Tip: The "Next Release" links are pre-baked placeholders. They will 404 until Oracle publishes the docs — update or uncomment as needed once live.*
