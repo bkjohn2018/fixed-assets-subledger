@@ -1,0 +1,139 @@
+{
+  "name": "Fixed Assets Subledger Model",
+  "tables": [
+    {
+      "name": "F_Asset_Transaction",
+      "columns": [
+        {"name": "TRANSACTION_HEADER_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "TRANSACTION_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "TRX_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "ASSET_NUMBER", "dataType": "String", "isHidden": false},
+        {"name": "BOOK_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "CATEGORY_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "COST_DELTA", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_RESERVE_DELTA", "dataType": "Decimal", "isHidden": false},
+        {"name": "PROCEEDS", "dataType": "Decimal", "isHidden": false},
+        {"name": "GAIN_LOSS", "dataType": "Decimal", "isHidden": false},
+        {"name": "UNITS_DELTA", "dataType": "Decimal", "isHidden": false},
+        {"name": "CODE_COMBINATION_ID", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_Depreciation_Period",
+      "columns": [
+        {"name": "ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "BOOK_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "PERIOD_COUNTER", "dataType": "Int64", "isHidden": false},
+        {"name": "PERIOD_NAME", "dataType": "String", "isHidden": false},
+        {"name": "DEPRN_AMOUNT", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_BONUS", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_CATCHUP", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_YTD", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_ITD", "dataType": "Decimal", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_Asset_Balance_Period",
+      "columns": [
+        {"name": "ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "BOOK_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "PERIOD_COUNTER", "dataType": "Int64", "isHidden": false},
+        {"name": "PERIOD_NAME", "dataType": "String", "isHidden": false},
+        {"name": "COST_BEG", "dataType": "Decimal", "isHidden": false},
+        {"name": "ADDITIONS", "dataType": "Decimal", "isHidden": false},
+        {"name": "ADJUSTMENTS", "dataType": "Decimal", "isHidden": false},
+        {"name": "TRANSFERS_NET", "dataType": "Decimal", "isHidden": false},
+        {"name": "RETIREMENTS_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_PERIOD", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_YTD", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_ITD", "dataType": "Decimal", "isHidden": false},
+        {"name": "NBV_END", "dataType": "Decimal", "isHidden": false},
+        {"name": "UNITS", "dataType": "Decimal", "isHidden": false}
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "F_Asset_Transaction_to_D_COA",
+      "fromTable": "F_Asset_Transaction",
+      "fromColumn": "CODE_COMBINATION_ID",
+      "toTable": "D_COA",
+      "toColumn": "CODE_COMBINATION_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Transaction_to_D_Asset",
+      "fromTable": "F_Asset_Transaction",
+      "fromColumn": "ASSET_ID",
+      "toTable": "D_Asset",
+      "toColumn": "ASSET_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Transaction_to_D_Book",
+      "fromTable": "F_Asset_Transaction",
+      "fromColumn": "BOOK_TYPE_CODE",
+      "toTable": "D_Book",
+      "toColumn": "BOOK_TYPE_CODE",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Depreciation_Period_to_D_Asset",
+      "fromTable": "F_Depreciation_Period",
+      "fromColumn": "ASSET_ID",
+      "toTable": "D_Asset",
+      "toColumn": "ASSET_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Depreciation_Period_to_D_Book",
+      "fromTable": "F_Depreciation_Period",
+      "fromColumn": "BOOK_TYPE_CODE",
+      "toTable": "D_Book",
+      "toColumn": "BOOK_TYPE_CODE",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Depreciation_Period_to_D_Time",
+      "fromTable": "F_Depreciation_Period",
+      "fromColumn": "PERIOD_COUNTER",
+      "toTable": "D_Time",
+      "toColumn": "PERIOD_COUNTER",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Balance_Period_to_D_Asset",
+      "fromTable": "F_Asset_Balance_Period",
+      "fromColumn": "ASSET_ID",
+      "toTable": "D_Asset",
+      "toColumn": "ASSET_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Balance_Period_to_D_Book",
+      "fromTable": "F_Asset_Balance_Period",
+      "fromColumn": "BOOK_TYPE_CODE",
+      "toTable": "D_Book",
+      "toColumn": "BOOK_TYPE_CODE",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Balance_Period_to_D_Time",
+      "fromTable": "F_Asset_Balance_Period",
+      "fromColumn": "PERIOD_COUNTER",
+      "toTable": "D_Time",
+      "toColumn": "PERIOD_COUNTER",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Transaction_to_D_Time_TRX_DATE",
+      "fromTable": "F_Asset_Transaction",
+      "fromColumn": "TRX_DATE",
+      "toTable": "D_Time",
+      "toColumn": "DATE",
+      "crossFilteringBehavior": "bothDirections",
+      "isActive": false
+    }
+  ]
+}
