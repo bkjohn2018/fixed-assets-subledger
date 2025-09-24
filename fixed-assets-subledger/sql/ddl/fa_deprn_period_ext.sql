@@ -1,0 +1,23 @@
+-- External table for staging CSV data from BI Publisher
+CREATE TABLE FA_DEPRN_PERIOD_EXT (
+  ASSET_ID                  NUMBER,
+  BOOK_TYPE_CODE            VARCHAR2(30),
+  PERIOD_COUNTER            NUMBER,
+  PERIOD_NAME               VARCHAR2(30),
+  DEPRN_AMOUNT              NUMBER,
+  DEPRN_BONUS               NUMBER,
+  DEPRN_CATCHUP             NUMBER,
+  DEPRN_YTD                 NUMBER,
+  DEPRN_ITD                 NUMBER
+)
+ORGANIZATION EXTERNAL (
+  TYPE ORACLE_LOADER
+  DEFAULT DIRECTORY DATA_DIR
+  ACCESS PARAMETERS (
+    RECORDS DELIMITED BY NEWLINE
+    FIELDS TERMINATED BY ','
+    OPTIONALLY ENCLOSED BY '"'
+    MISSING FIELD VALUES ARE NULL
+  )
+  LOCATION ('fa_deprn_period_*.csv')
+);

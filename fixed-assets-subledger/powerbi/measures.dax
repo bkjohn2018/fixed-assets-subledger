@@ -1,0 +1,8 @@
+[Depreciation (Period)] := SUM(F_Depreciation_Period[DEPRN_AMOUNT])
+[NBV End]               := SUM(F_Asset_Balance_Period[NBV_END])
+[Cost Additions]        := CALCULATE(SUM(F_Asset_Transaction[COST_DELTA]), F_Asset_Transaction[TRANSACTION_TYPE_CODE]="ADDITION")
+[Transactions Count]    := COUNTROWS(F_Asset_Transaction)
+
+-- Notes on USERELATIONSHIP:
+-- Use inactive relationship for TRX date filtering:
+-- [Depreciation YTD] := CALCULATE([Depreciation (Period)], USERELATIONSHIP(D_Time[PERIOD_COUNTER], F_Depreciation_Period[PERIOD_COUNTER]))

@@ -1,0 +1,27 @@
+name: fa_transactions
+grain: transaction_header
+primary_key: [TRANSACTION_HEADER_ID]
+foreign_keys:
+  - ASSET_ID -> D_Asset.ASSET_ID
+  - BOOK_TYPE_CODE -> D_Book.BOOK_TYPE_CODE
+  - CODE_COMBINATION_ID -> D_COA.CODE_COMBINATION_ID
+refresh:
+  cadence: monthly
+  partitioning: by_month(TRX_DATE)
+columns:
+  - {name: TRANSACTION_HEADER_ID, type: NUMBER, required: true}
+  - {name: TRANSACTION_TYPE_CODE, type: VARCHAR2(30)}
+  - {name: TRX_DATE, type: DATE}
+  - {name: ASSET_ID, type: NUMBER}
+  - {name: ASSET_NUMBER, type: VARCHAR2(30)}
+  - {name: BOOK_TYPE_CODE, type: VARCHAR2(30)}
+  - {name: CATEGORY_ID, type: NUMBER}
+  - {name: COST_DELTA, type: NUMBER}
+  - {name: DEPRN_RESERVE_DELTA, type: NUMBER}
+  - {name: PROCEEDS, type: NUMBER}
+  - {name: GAIN_LOSS, type: NUMBER}
+  - {name: UNITS_DELTA, type: NUMBER}
+  - {name: CODE_COMBINATION_ID, type: NUMBER}
+null_rules:
+  - {column: GAIN_LOSS, allowed_when: "TRANSACTION_TYPE_CODE NOT IN ('RETIREMENT','REINSTATEMENT')"}
+version: 25C

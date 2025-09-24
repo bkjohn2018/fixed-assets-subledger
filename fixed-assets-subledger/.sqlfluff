@@ -1,0 +1,13 @@
+[sqlfluff]
+dialect = oracle
+templater = jinja
+
+[sqlfluff:indentation]
+tab_space_size = 4
+
+[sqlfluff:layout:type:comma]
+spacing_before = touch
+line_position = trailing
+
+[sqlfluff:rules:ambiguous.column_references]
+group_by_and_order_by_style = implicit

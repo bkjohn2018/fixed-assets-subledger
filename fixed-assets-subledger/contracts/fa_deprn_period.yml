@@ -1,0 +1,19 @@
+name: fa_deprn_period
+grain: asset_book_period
+primary_key: [ASSET_ID, BOOK_TYPE_CODE, PERIOD_COUNTER]
+foreign_keys:
+  - ASSET_ID -> D_Asset.ASSET_ID
+  - BOOK_TYPE_CODE -> D_Book.BOOK_TYPE_CODE
+  - PERIOD_COUNTER -> D_Time.PERIOD_COUNTER
+refresh: {cadence: monthly, partitioning: by_period(PERIOD_NAME)}
+columns:
+  - {name: ASSET_ID, type: NUMBER, required: true}
+  - {name: BOOK_TYPE_CODE, type: VARCHAR2(30), required: true}
+  - {name: PERIOD_COUNTER, type: NUMBER, required: true}
+  - {name: PERIOD_NAME, type: VARCHAR2(30)}
+  - {name: DEPRN_AMOUNT, type: NUMBER}
+  - {name: DEPRN_BONUS, type: NUMBER}
+  - {name: DEPRN_CATCHUP, type: NUMBER}
+  - {name: DEPRN_YTD, type: NUMBER}
+  - {name: DEPRN_ITD, type: NUMBER}
+version: 25C
