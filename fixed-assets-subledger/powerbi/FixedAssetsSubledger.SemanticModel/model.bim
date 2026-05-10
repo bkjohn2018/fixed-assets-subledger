@@ -1,0 +1,306 @@
+{
+  "name": "FixedAssetsSubledger",
+  "id": "FixedAssetsSubledger",
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "en-US",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "discourageImplicitMeasures": true,
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"D_Asset\",\"D_Book\",\"D_COA\",\"D_Time\",\"F_Asset_Balance_Period\",\"F_Asset_Transaction\",\"F_Depreciation_Period\"]"
+      },
+      {
+        "name": "_RepoReadme",
+        "value": "Stub tables keep the bus shape for this repo. Swap each partition M for the CSV loaders in powerbi/queries (point File.Contents at ../../data/... from this folder), then import powerbi/measures.dax in Tabular Editor or Desktop."
+      }
+    ],
+    "tables": [
+      {
+        "name": "D_Asset",
+        "columns": [
+          {
+            "name": "ASSET_ID",
+            "dataType": "Int64",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_Asset",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [ASSET_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "D_Book",
+        "columns": [
+          {
+            "name": "BOOK_TYPE_CODE",
+            "dataType": "String",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_Book",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [BOOK_TYPE_CODE = type text], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "D_COA",
+        "columns": [
+          {
+            "name": "CODE_COMBINATION_ID",
+            "dataType": "Int64",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_COA",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [CODE_COMBINATION_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "D_Time",
+        "columns": [
+          {
+            "name": "PERIOD_COUNTER",
+            "dataType": "Int64",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PERIOD_NAME",
+            "dataType": "String",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DATE",
+            "dataType": "DateTime",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_Time",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [PERIOD_COUNTER = Int64.Type, PERIOD_NAME = type text, DATE = type date], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Asset_Transaction",
+        "columns": [
+          { "name": "TRANSACTION_HEADER_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "DISTRIBUTION_LINE_NUMBER", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "TRANSACTION_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "TRX_DATE", "dataType": "DateTime", "summarizeBy": "none" },
+          { "name": "ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "ASSET_NUMBER", "dataType": "String", "summarizeBy": "none" },
+          { "name": "BOOK_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "CATEGORY_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "COST_DELTA", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_RESERVE_DELTA", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "PROCEEDS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "GAIN_LOSS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "UNITS_DELTA", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "CODE_COMBINATION_ID", "dataType": "Int64", "summarizeBy": "none" }
+        ],
+        "partitions": [
+          {
+            "name": "F_Asset_Transaction",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [TRANSACTION_HEADER_ID = Int64.Type, DISTRIBUTION_LINE_NUMBER = Int64.Type, TRANSACTION_TYPE_CODE = type text, TRX_DATE = type date, ASSET_ID = Int64.Type, ASSET_NUMBER = type text, BOOK_TYPE_CODE = type text, CATEGORY_ID = Int64.Type, COST_DELTA = type number, DEPRN_RESERVE_DELTA = type number, PROCEEDS = type number, GAIN_LOSS = type number, UNITS_DELTA = type number, CODE_COMBINATION_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Depreciation_Period",
+        "columns": [
+          { "name": "ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "BOOK_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "PERIOD_COUNTER", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PERIOD_NAME", "dataType": "String", "summarizeBy": "none" },
+          { "name": "DEPRN_AMOUNT", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_BONUS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_CATCHUP", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_YTD", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_ITD", "dataType": "Decimal", "summarizeBy": "sum" }
+        ],
+        "partitions": [
+          {
+            "name": "F_Depreciation_Period",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [ASSET_ID = Int64.Type, BOOK_TYPE_CODE = type text, PERIOD_COUNTER = Int64.Type, PERIOD_NAME = type text, DEPRN_AMOUNT = type number, DEPRN_BONUS = type number, DEPRN_CATCHUP = type number, DEPRN_YTD = type number, DEPRN_ITD = type number], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Asset_Balance_Period",
+        "columns": [
+          { "name": "ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "BOOK_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "PERIOD_COUNTER", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PERIOD_NAME", "dataType": "String", "summarizeBy": "none" },
+          { "name": "COST_BEG", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "ADDITIONS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "ADJUSTMENTS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "TRANSFERS_NET", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "RETIREMENTS_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_PERIOD", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_YTD", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_ITD", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "NBV_END", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "UNITS", "dataType": "Decimal", "summarizeBy": "sum" }
+        ],
+        "partitions": [
+          {
+            "name": "F_Asset_Balance_Period",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [ASSET_ID = Int64.Type, BOOK_TYPE_CODE = type text, PERIOD_COUNTER = Int64.Type, PERIOD_NAME = type text, COST_BEG = type number, ADDITIONS = type number, ADJUSTMENTS = type number, TRANSFERS_NET = type number, RETIREMENTS_COST = type number, DEPRN_PERIOD = type number, DEPRN_YTD = type number, DEPRN_ITD = type number, NBV_END = type number, UNITS = type number], {}) in Source"
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "F_Asset_Transaction_to_D_COA",
+        "fromTable": "F_Asset_Transaction",
+        "fromColumn": "CODE_COMBINATION_ID",
+        "toTable": "D_COA",
+        "toColumn": "CODE_COMBINATION_ID",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Transaction_to_D_Asset",
+        "fromTable": "F_Asset_Transaction",
+        "fromColumn": "ASSET_ID",
+        "toTable": "D_Asset",
+        "toColumn": "ASSET_ID",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Transaction_to_D_Book",
+        "fromTable": "F_Asset_Transaction",
+        "fromColumn": "BOOK_TYPE_CODE",
+        "toTable": "D_Book",
+        "toColumn": "BOOK_TYPE_CODE",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Depreciation_Period_to_D_Asset",
+        "fromTable": "F_Depreciation_Period",
+        "fromColumn": "ASSET_ID",
+        "toTable": "D_Asset",
+        "toColumn": "ASSET_ID",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Depreciation_Period_to_D_Book",
+        "fromTable": "F_Depreciation_Period",
+        "fromColumn": "BOOK_TYPE_CODE",
+        "toTable": "D_Book",
+        "toColumn": "BOOK_TYPE_CODE",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Depreciation_Period_to_D_Time",
+        "fromTable": "F_Depreciation_Period",
+        "fromColumn": "PERIOD_COUNTER",
+        "toTable": "D_Time",
+        "toColumn": "PERIOD_COUNTER",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Balance_Period_to_D_Asset",
+        "fromTable": "F_Asset_Balance_Period",
+        "fromColumn": "ASSET_ID",
+        "toTable": "D_Asset",
+        "toColumn": "ASSET_ID",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Balance_Period_to_D_Book",
+        "fromTable": "F_Asset_Balance_Period",
+        "fromColumn": "BOOK_TYPE_CODE",
+        "toTable": "D_Book",
+        "toColumn": "BOOK_TYPE_CODE",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Balance_Period_to_D_Time",
+        "fromTable": "F_Asset_Balance_Period",
+        "fromColumn": "PERIOD_COUNTER",
+        "toTable": "D_Time",
+        "toColumn": "PERIOD_COUNTER",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Transaction_to_D_Time_TRX_DATE",
+        "fromTable": "F_Asset_Transaction",
+        "fromColumn": "TRX_DATE",
+        "toTable": "D_Time",
+        "toColumn": "DATE",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": false
+      }
+    ]
+  }
+}

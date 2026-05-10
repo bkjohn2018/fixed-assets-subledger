@@ -137,6 +137,8 @@ sqlfluff lint sql --dialect oracle
 
 The checked-in Power BI files are source artifacts, not packaged report files.
 
+- Open **`powerbi/FixedAssetsSubledger.pbip`** in Power BI Desktop (enable **Preview**: *Power BI Project (.pbip) save option*) to edit the scaffolded semantic model (`FixedAssetsSubledger.SemanticModel`) and report (`FixedAssetsSubledger.Report`).
+- Facts and conforming dimensions ship as **typed empty tables** wired like `powerbi/model.json`; replace each partition M with the CSV loaders in `powerbi/queries/`, apply `powerbi/measures.dax`, then reconcile using the checklist in **Workflow**.
 - `.pbix` files are intentionally ignored.
 - CSV exports are intentionally ignored.
 - The `.m` files in `powerbi/queries/` are Power Query files, even though GitHub may classify `.m` as another language.

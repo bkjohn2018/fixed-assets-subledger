@@ -25,3 +25,7 @@ Thumbs.db
 # Keep accidental app backends and local service experiments out of the sync set.
 backend/
 .codexgit/
+
+# Power BI Project local artifacts (see powerbi/*.pbip)
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
