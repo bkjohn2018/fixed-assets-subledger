@@ -1,160 +1,160 @@
-# Fixed Assets Subledger (Oracle Fusion 26B)
+# Fixed Assets Subledger
 
-[![Oracle 26B Docs](https://img.shields.io/badge/Oracle-26B_Docs-red)](https://docs.oracle.com/en/cloud/saas/financials/26b/oedmf/index.html)
+Portable query, contract, and Power BI model artifacts for an Oracle Fusion Fixed Assets subledger model.
 
-## Purpose
-Subledger-only star schema for Oracle Fusion **Fixed Assets** (26B). Source = BI Publisher (OTBI) → CSV → Power BI today; later pivot to BICC → Fabric with the same column contracts.
+This repository is designed to move cleanly between a personal development machine and a work machine. It stores source-controlled analytics artifacts only: Oracle OTBI/BIP logical SQL, column contracts, Power BI query/model definitions, documentation, and lightweight validation scripts.
 
-- Scope: Fixed Assets subledger only (no SLA).
-- COA Join: `CODE_COMBINATION_ID` into governed COA.
-- Use Cases: rollforwards, depreciation, additions/retirements, account-level analytics.
+[Oracle Financials 26B Tables and Views](https://docs.oracle.com/en/cloud/saas/financials/26b/oedmf/index.html)
 
-## Portability Boundary
-This repository is intentionally a portable workspace for query and model artifacts that can move between a personal machine and a work machine.
+## Scope
 
-Keep in scope:
-- Oracle Fixed Assets SQL extracts in `sql/`
-- Column contracts in `contracts/`
-- Power BI query/model artifacts in `powerbi/`
-- Design and lineage notes in `docs/`
-- Lightweight validation scripts in `scripts/`
+In scope:
 
-Keep out of scope:
+- Oracle Fusion Fixed Assets subledger reporting
+- OTBI / BI Publisher extract SQL under `sql/bip/`
+- Column contracts under `contracts/`
+- Power BI query and model metadata under `powerbi/`
+- Data lineage and bus matrix documentation under `docs/`
+- Simple validation scripts under `scripts/`
+
+Out of scope:
+
+- SLA, GL, AP, Projects, or lease accounting facts unless added as separate future domains
 - Application backends, API services, databases, OAuth/JWT code, and deployment configs
 - Local data exports, `.pbix` files, generated caches, virtual environments, and secrets
-- Machine-specific scratch projects that are not part of the Fixed Assets subledger workflow
+- Machine-specific editor settings
 
-## Data Flow
+## Source Pattern
+
+Current flow:
+
+```text
+Oracle Fixed Assets reporting extract ESS process
+  -> OTBI / BI Publisher logical SQL
+  -> CSV partitions
+  -> Power BI model
 ```
 
-Fusion OTBI (BIP Logical SQL) → CSV files → Power BI
-Later: Fusion BICC (PVO extracts) → Fabric Lakehouse → same model
+Future flow:
 
+```text
+Oracle BICC / PVO extracts
+  -> Fabric Lakehouse
+  -> same contract-driven model
 ```
 
-Before exporting the Fixed Assets OTBI subject areas, run Oracle's **Extract Asset Reporting Data** / **Extract Assets Reporting Data** ESS process so the reporting extract tables are current. Oracle 26B documents these OTBI subject areas as extract-backed:
-- Transactions: distribution-line grain via `FA_TRX_EXTRACT`
-- Depreciation: depreciation-distribution grain via `FA_DEPRN_EXTRACT`
-- Balances: transaction-distribution-line grain via `FA_BALANCES_EXTRACT`
+Before exporting Fixed Assets OTBI subject areas, run Oracle's Fixed Assets reporting extract ESS process so the reporting extract tables are current.
 
-## Facts & Dimensions
-**Facts**
-- **F_Asset_Transaction** (distribution grain)
-  - Keys: TRANSACTION_HEADER_ID, DISTRIBUTION_LINE_NUMBER, ASSET_ID, BOOK_TYPE_CODE, TRX_DATE, CODE_COMBINATION_ID
-  - Measures: COST_DELTA, DEPRN_RESERVE_DELTA, PROCEEDS, GAIN_LOSS, UNITS_DELTA
-- **F_Depreciation_Period** (asset×book×period; aggregated from OTBI depreciation distribution grain)
-  - Keys: ASSET_ID, BOOK_TYPE_CODE, PERIOD_COUNTER
-  - Measures: DEPRN_AMOUNT, DEPRN_BONUS, DEPRN_CATCHUP, DEPRN_YTD, DEPRN_ITD
-- **F_Asset_Balance_Period** (asset×book×period snapshot; aggregated from OTBI balance distribution grain)
-  - Keys: ASSET_ID, BOOK_TYPE_CODE, PERIOD_COUNTER
-  - Measures: COST_BEG, ADDITIONS, ADJUSTMENTS, TRANSFERS_NET, RETIREMENTS_COST, DEPRN_PERIOD, DEPRN_YTD, DEPRN_ITD, NBV_END, UNITS
+Oracle 26B documents the relevant OTBI subject areas as extract-backed:
 
-**Dimensions**: D_Asset (FA_ADDITIONS_B), D_Book (FA_BOOKS), D_Category, D_Location, D_Time (with FA calendar map), **D_COA (PK = CODE_COMBINATION_ID)**.
+- `Fixed Assets - Asset Transactions Real Time`: distribution-line grain via `FA_TRX_EXTRACT`
+- `Fixed Assets - Asset Depreciation Real Time`: depreciation-distribution grain via `FA_DEPRN_EXTRACT`
+- `Fixed Assets - Asset Balances Real Time`: transaction-distribution-line grain via `FA_BALANCES_EXTRACT`
 
-### Transaction Grain
-Oracle documents `Fixed Assets - Asset Transactions Real Time` at asset transaction distribution-line grain. This repo therefore treats distribution grain as canonical.
+## Model Grain
 
-- **Canonical distribution grain:** `sql/bip/fa_transactions_distribution.sql`, contracts `contracts/fa_transactions.yml` and `contracts/fa_transactions_distribution.yml`, file `fa_transactions_distribution_{yyyymm}.csv`.
-  - Pros: preserves exact account splits via `CODE_COMBINATION_ID`.
-  - Key: `[TRANSACTION_HEADER_ID, DISTRIBUTION_LINE_NUMBER]`.
-- **Header summary convenience extract:** `sql/bip/fa_transactions_header.sql`, file `fa_transactions_header_{yyyymm}.csv`.
-  - Use only for transaction-header summaries where account-level analysis is not needed.
-  - It groups OTBI distribution rows to transaction header and intentionally omits `CODE_COMBINATION_ID`.
+The model is contracts-first. Update the contract before changing SQL or Power BI metadata.
 
-In Power BI, use the distribution extract as `F_Asset_Transaction`. Relationships remain COA by `CODE_COMBINATION_ID`.
+| Fact | Grain | Primary key |
+| --- | --- | --- |
+| `F_Asset_Transaction` | Transaction distribution line | `TRANSACTION_HEADER_ID`, `DISTRIBUTION_LINE_NUMBER` |
+| `F_Depreciation_Period` | Asset x book x period, aggregated from OTBI distribution rows | `ASSET_ID`, `BOOK_TYPE_CODE`, `PERIOD_COUNTER` |
+| `F_Asset_Balance_Period` | Asset x book x period snapshot, aggregated from OTBI distribution rows | `ASSET_ID`, `BOOK_TYPE_CODE`, `PERIOD_COUNTER` |
 
-## ERD (Mermaid)
-```mermaid
-erDiagram
-    D_COA ||--o{ F_Asset_Transaction : "has"
-    D_Asset ||--o{ F_Asset_Transaction : "has"
-    D_Book ||--o{ F_Asset_Transaction : "has"
-    D_Time ||--o{ F_Asset_Transaction : "has"
-    
-    D_Asset ||--o{ F_Depreciation_Period : "has"
-    D_Book ||--o{ F_Depreciation_Period : "has"
-    D_Time ||--o{ F_Depreciation_Period : "has"
-    
-    D_Asset ||--o{ F_Asset_Balance_Period : "has"
-    D_Book ||--o{ F_Asset_Balance_Period : "has"
-    D_Time ||--o{ F_Asset_Balance_Period : "has"
-    
-    F_Asset_Transaction {
-        int TRANSACTION_HEADER_ID
-        int DISTRIBUTION_LINE_NUMBER
-        string TRANSACTION_TYPE_CODE
-        date TRX_DATE
-        int ASSET_ID
-        string ASSET_NUMBER
-        string BOOK_TYPE_CODE
-        int CODE_COMBINATION_ID
-        decimal COST_DELTA
-        decimal DEPRN_RESERVE_DELTA
-        decimal PROCEEDS
-        decimal GAIN_LOSS
-        decimal UNITS_DELTA
-    }
-    
-    F_Depreciation_Period {
-        int ASSET_ID
-        string BOOK_TYPE_CODE
-        int PERIOD_COUNTER
-        string PERIOD_NAME
-        decimal DEPRN_AMOUNT
-        decimal DEPRN_BONUS
-        decimal DEPRN_CATCHUP
-        decimal DEPRN_YTD
-        decimal DEPRN_ITD
-    }
-    
-    F_Asset_Balance_Period {
-        int ASSET_ID
-        string BOOK_TYPE_CODE
-        int PERIOD_COUNTER
-        string PERIOD_NAME
-        decimal COST_BEG
-        decimal ADDITIONS
-        decimal ADJUSTMENTS
-        decimal TRANSFERS_NET
-        decimal RETIREMENTS_COST
-        decimal DEPRN_PERIOD
-        decimal DEPRN_YTD
-        decimal DEPRN_ITD
-        decimal NBV_END
-        decimal UNITS
-    }
-    
-    D_COA {
-        int CODE_COMBINATION_ID
-    }
+`CODE_COMBINATION_ID` is the canonical COA key for account-level analysis.
+
+## Transaction Extracts
+
+Canonical transaction extract:
+
+- SQL: `sql/bip/fa_transactions_distribution.sql`
+- Contracts: `contracts/fa_transactions.yml`, `contracts/fa_transactions_distribution.yml`
+- CSV pattern: `fa_transactions_distribution_{yyyymm}.csv`
+- Use this as `F_Asset_Transaction` in Power BI.
+
+Convenience header summary:
+
+- SQL: `sql/bip/fa_transactions_header.sql`
+- CSV pattern: `fa_transactions_header_{yyyymm}.csv`
+- Use only when account-level analysis is not needed.
+- This query groups distribution rows to transaction header and intentionally omits `CODE_COMBINATION_ID`.
+
+## Repository Layout
+
+```text
+contracts/             Column contracts and grain declarations
+docs/                  Bus matrix, ERD notes, and lineage
+powerbi/               Power BI model metadata, measures, and M queries
+scripts/               Lightweight validation scripts
+sql/bip/               BI Publisher / OTBI logical SQL extracts
+sql/ddl/               External table staging DDL
+sql/views/             Convenience views, not authoritative contracts
 ```
 
-## Bus Matrix (Kimball)
-This repo follows a **bus architecture** with conformed dimensions across facts.  
-See **[docs/bus-matrix.md](docs/bus-matrix.md)** for the Fixed Assets matrix and **[docs/bus-matrix-template.md](docs/bus-matrix-template.md)** to extend into other finance domains.
+## Workflow
 
-## Contracts-first
-Column names/types live in `contracts/*.yml` and are the source of truth. Update contracts → SQL → PBI (in that order). CI validates contracts.
+1. Run Oracle's Fixed Assets reporting extract ESS process.
+2. Export CSV partitions using the SQL in `sql/bip/`.
+3. Load the CSVs through the Power BI queries in `powerbi/queries/`.
+4. Validate relationships:
+   - `F_Asset_Transaction[CODE_COMBINATION_ID]` to `D_COA[CODE_COMBINATION_ID]`
+   - `F_Asset_Transaction[TRX_DATE]` to date role in `D_Time`
+   - Period facts through `PERIOD_COUNTER`
+5. Reconcile a sample month:
+   - transaction additions / retirements
+   - depreciation period amount
+   - net book value rollforward
+   - COA tie-out where account-level data is expected
 
-## Getting Started
-1) Run Oracle's Fixed Assets reporting extract ESS process.
-2) Use `sql/bip/*` in BI Publisher to export CSV partitions.
-3) Point `powerbi/queries/*.m` at your CSV folder.
-4) Set relationships:  
-   - `F_Asset_Transaction[CODE_COMBINATION_ID] → D_COA[CODE_COMBINATION_ID]`  
-   - Role-play Time: TRX_DATE vs PERIOD_COUNTER (use `USERELATIONSHIP` in measures).
-5) Sanity checks: rollforward math + COA tie-out for a sample month.
+## Change Discipline
+
+For column, grain, or naming changes:
+
+1. Update `contracts/*.yml`.
+2. Update the matching `sql/bip/*.sql`.
+3. Update `powerbi/queries/*.m` and `powerbi/model.json`.
+4. Update docs if the business grain or source assumption changed.
+5. Run validations.
+
+Avoid mixing grains in one fact. If a reporting need requires both distribution and header views, keep one canonical fact and one clearly named aggregate or convenience extract.
+
+## Validation
+
+From the repository root:
+
+```powershell
+python scripts\check_docs.py
+python scripts\validate_contracts.py
+```
+
+Optional SQL linting, if SQLFluff is installed:
+
+```powershell
+sqlfluff lint sql --dialect oracle
+```
+
+## Power BI Notes
+
+The checked-in Power BI files are source artifacts, not packaged report files.
+
+- `.pbix` files are intentionally ignored.
+- CSV exports are intentionally ignored.
+- The `.m` files in `powerbi/queries/` are Power Query files, even though GitHub may classify `.m` as another language.
 
 ## Release Discipline
-- Anchored on **26B**. On quarterly updates, diff What's New and the Oracle 26B/next OEDMF and OTBI subject-area docs, then update contracts first.
 
-License: MIT (or org standard).
+Current source baseline: Oracle Fusion Financials 26B.
+
+On quarterly updates:
+
+1. Review Oracle What's New, OEDMF, and OTBI subject-area documentation.
+2. Confirm subject-area grain and extract prerequisites.
+3. Update contracts first.
+4. Update SQL and Power BI metadata.
+5. Re-run validations and a sample reconciliation.
 
 ## References
 
-- **Current Release (26B)**  
-  [Oracle Financials 26B Tables and Views](https://docs.oracle.com/en/cloud/saas/financials/26b/oedmf/index.html)  
-  [Oracle Financials 26B OTBI Subject Areas](https://docs.oracle.com/en/cloud/saas/financials/26b/faofb/subject-areas-for-transactional-business-intelligence-in-financials.pdf)
-
-- **General References**  
-  - [Oracle Financials 26B Books](https://docs.oracle.com/en/cloud/saas/financials/26b/books.html)
+- [Oracle Financials 26B Tables and Views](https://docs.oracle.com/en/cloud/saas/financials/26b/oedmf/index.html)
+- [Oracle Financials 26B OTBI Subject Areas](https://docs.oracle.com/en/cloud/saas/financials/26b/faofb/subject-areas-for-transactional-business-intelligence-in-financials.pdf)
+- [Oracle Financials 26B Books](https://docs.oracle.com/en/cloud/saas/financials/26b/books.html)
