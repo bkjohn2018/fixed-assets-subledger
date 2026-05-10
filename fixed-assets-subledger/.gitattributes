@@ -1,0 +1,2 @@
+# Power Query uses .m files, which GitHub may otherwise classify as Mathematica.
+powerbi/queries/*.m linguist-detectable=false
