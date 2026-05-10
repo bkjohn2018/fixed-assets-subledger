@@ -1,6 +1,6 @@
 name: fa_transactions_distribution
 grain: transaction_distribution
-primary_key: [TRANSACTION_HEADER_ID, CODE_COMBINATION_ID]
+primary_key: [TRANSACTION_HEADER_ID, DISTRIBUTION_LINE_NUMBER]
 foreign_keys:
   - ASSET_ID -> D_Asset.ASSET_ID
   - BOOK_TYPE_CODE -> D_Book.BOOK_TYPE_CODE
@@ -10,7 +10,7 @@ refresh:
   partitioning: by_month(TRX_DATE)
 columns:
   - {name: TRANSACTION_HEADER_ID, type: NUMBER, required: true}
-  - {name: DISTRIBUTION_LINE_NUMBER, type: NUMBER}
+  - {name: DISTRIBUTION_LINE_NUMBER, type: NUMBER, required: true}
   - {name: TRANSACTION_TYPE_CODE, type: VARCHAR2(30)}
   - {name: TRX_DATE, type: DATE}
   - {name: ASSET_ID, type: NUMBER}
@@ -23,4 +23,9 @@ columns:
   - {name: GAIN_LOSS, type: NUMBER}
   - {name: UNITS_DELTA, type: NUMBER}
   - {name: CODE_COMBINATION_ID, type: NUMBER}
-version: 25C
+source_notes:
+  oracle_release: 26B
+  otbi_subject_area: Fixed Assets - Asset Transactions Real Time
+  documented_grain: asset transaction distribution line (FA_TRX_EXTRACT)
+  prerequisite: Run the Extract Assets Reporting Data ESS job before exporting OTBI data.
+version: 26B

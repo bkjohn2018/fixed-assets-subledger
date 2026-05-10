@@ -1,6 +1,7 @@
 -- External table for staging CSV data from BI Publisher
 CREATE TABLE FA_TRANSACTIONS_EXT (
   TRANSACTION_HEADER_ID     NUMBER,
+  DISTRIBUTION_LINE_NUMBER  NUMBER,
   TRANSACTION_TYPE_CODE     VARCHAR2(30),
   TRX_DATE                  DATE,
   ASSET_ID                  NUMBER,

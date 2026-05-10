@@ -5,6 +5,7 @@
       "name": "F_Asset_Transaction",
       "columns": [
         {"name": "TRANSACTION_HEADER_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "DISTRIBUTION_LINE_NUMBER", "dataType": "Int64", "isHidden": false},
         {"name": "TRANSACTION_TYPE_CODE", "dataType": "String", "isHidden": false},
         {"name": "TRX_DATE", "dataType": "DateTime", "isHidden": false},
         {"name": "ASSET_ID", "dataType": "Int64", "isHidden": false},

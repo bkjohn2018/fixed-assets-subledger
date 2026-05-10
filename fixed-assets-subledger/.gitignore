@@ -3,11 +3,25 @@ data/
 *.csv
 *.parquet
 *.pbix
+*.xlsx
+*.xls
+*.zip
 # python
 __pycache__/
 *.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
 # node/yarn
 node_modules/
 # OS
 .DS_Store
 Thumbs.db
+.vscode/
+
+# Non-repo application scaffolding
+# This repository is for portable Oracle Fixed Assets query/model artifacts.
+# Keep accidental app backends and local service experiments out of the sync set.
+backend/
+.codexgit/

@@ -21,4 +21,10 @@ columns:
   - {name: DEPRN_ITD, type: NUMBER}
   - {name: NBV_END, type: NUMBER}
   - {name: UNITS, type: NUMBER}
-version: 25C
+source_notes:
+  oracle_release: 26B
+  otbi_subject_area: Fixed Assets - Asset Balances Real Time
+  documented_source_grain: asset transaction distribution line (FA_BALANCES_EXTRACT)
+  extraction_rule: Aggregate OTBI distribution-grain rows to ASSET_ID, BOOK_TYPE_CODE, PERIOD_COUNTER.
+  prerequisite: Run the Extract Asset Reporting Data ESS job before exporting OTBI data.
+version: 26B
