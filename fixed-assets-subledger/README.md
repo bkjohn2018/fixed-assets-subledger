@@ -11,6 +11,7 @@ This repository is designed to move cleanly between a personal development machi
 In scope:
 
 - Oracle Fusion Fixed Assets subledger reporting
+- Oracle Fusion AP supplier spend history (SLA-linked)
 - OTBI / BI Publisher extract SQL under `sql/bip/`
 - Column contracts under `contracts/`
 - Power BI query and model metadata under `powerbi/`
@@ -19,7 +20,7 @@ In scope:
 
 Out of scope:
 
-- SLA, GL, AP, Projects, or lease accounting facts unless added as separate future domains
+- Projects or lease accounting facts unless added as separate future domains
 - Application backends, API services, databases, OAuth/JWT code, and deployment configs
 - Local data exports, `.pbix` files, generated caches, virtual environments, and secrets
 - Machine-specific editor settings
@@ -60,8 +61,26 @@ The model is contracts-first. Update the contract before changing SQL or Power B
 | `F_Asset_Transaction` | Transaction distribution line | `TRANSACTION_HEADER_ID`, `DISTRIBUTION_LINE_NUMBER` |
 | `F_Depreciation_Period` | Asset x book x period, aggregated from OTBI distribution rows | `ASSET_ID`, `BOOK_TYPE_CODE`, `PERIOD_COUNTER` |
 | `F_Asset_Balance_Period` | Asset x book x period snapshot, aggregated from OTBI distribution rows | `ASSET_ID`, `BOOK_TYPE_CODE`, `PERIOD_COUNTER` |
+| `Supplier_History` | AP invoice distribution accounting event | `INVOICE_DISTRIBUTION_ID`, `AE_HEADER_ID` |
 
 `CODE_COMBINATION_ID` is the canonical COA key for account-level analysis.
+
+## Supplier Spend History Contract
+
+- Contract: `contracts/supplier_history.yml`
+- Grain: AP invoice distribution accounting event
+- Core columns:
+  - `SUPPLIER_ID`
+  - `INVOICE_NUMBER`
+  - `INVOICE_DATE`
+  - `GL_DATE`
+  - `CODE_COMBINATION_ID`
+  - `DISTRIBUTION_AMOUNT`
+- Source pattern:
+  - `AP_INVOICE_DISTRIBUTIONS_ALL` and `AP_INVOICES_ALL`
+  - linked through `XLA_DISTRIBUTION_LINKS` to `XLA_AE_HEADERS`
+  - accounted filter: `ACCOUNTING_ENTRY_STATUS_CODE = 'F'`
+- Intended use: downstream aggregation of supplier spend by `CODE_COMBINATION_ID` and date.
 
 ## Transaction Extracts
 
