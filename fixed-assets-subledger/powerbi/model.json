@@ -52,6 +52,48 @@
         {"name": "NBV_END", "dataType": "Decimal", "isHidden": false},
         {"name": "UNITS", "dataType": "Decimal", "isHidden": false}
       ]
+    },
+    {
+      "name": "F_AP_Aging_Schedule",
+      "columns": [
+        {"name": "AS_OF_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "SCHEDULE_KEY", "dataType": "String", "isHidden": false},
+        {"name": "INVOICE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PAYMENT_NUM", "dataType": "Int64", "isHidden": false},
+        {"name": "ORG_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "VENDOR_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "VENDOR_SITE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "INVOICE_NUM", "dataType": "String", "isHidden": false},
+        {"name": "INVOICE_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "DUE_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "INVOICE_TYPE_LOOKUP_CODE", "dataType": "String", "isHidden": false},
+        {"name": "AMOUNT_REMAINING", "dataType": "Decimal", "isHidden": false},
+        {"name": "OPEN_AMOUNT", "dataType": "Decimal", "isHidden": false},
+        {"name": "DAYS_PAST_DUE", "dataType": "Int64", "isHidden": false},
+        {"name": "AGING_BUCKET", "dataType": "String", "isHidden": false},
+        {"name": "HOLD_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "IBY_HOLD_REASON", "dataType": "String", "isHidden": false},
+        {"name": "IS_CREDIT_MEMO", "dataType": "Int64", "isHidden": false},
+        {"name": "IS_ON_HOLD", "dataType": "Int64", "isHidden": false},
+        {"name": "HAS_PROJECT_DISTRIBUTION", "dataType": "Int64", "isHidden": false},
+        {"name": "HAS_PO_MATCHED_DISTRIBUTION", "dataType": "Int64", "isHidden": false},
+        {"name": "DISTRIBUTION_TOTAL_AMOUNT", "dataType": "Decimal", "isHidden": true}
+      ]
+    },
+    {
+      "name": "F_AP_Invoice_Distribution",
+      "columns": [
+        {"name": "AS_OF_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "INVOICE_DISTRIBUTION_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "INVOICE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "AMOUNT", "dataType": "Decimal", "isHidden": false},
+        {"name": "DIST_CODE_COMBINATION_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PJC_PROJECT_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "IS_PROJECT_RELATED", "dataType": "Int64", "isHidden": false},
+        {"name": "IS_PO_MATCHED", "dataType": "Int64", "isHidden": false},
+        {"name": "VENDOR_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "INVOICE_NUM", "dataType": "String", "isHidden": false}
+      ]
     }
   ],
   "relationships": [
@@ -133,6 +175,40 @@
       "fromColumn": "TRX_DATE",
       "toTable": "D_Time",
       "toColumn": "DATE",
+      "crossFilteringBehavior": "bothDirections",
+      "isActive": false
+    },
+    {
+      "name": "F_AP_Aging_Schedule_to_D_Time_DUE_DATE",
+      "fromTable": "F_AP_Aging_Schedule",
+      "fromColumn": "DUE_DATE",
+      "toTable": "D_Time",
+      "toColumn": "DATE",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_AP_Aging_Schedule_to_D_Supplier",
+      "fromTable": "F_AP_Aging_Schedule",
+      "fromColumn": "VENDOR_ID",
+      "toTable": "D_Supplier",
+      "toColumn": "SUPPLIER_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_AP_Invoice_Distribution_to_F_AP_Aging_Schedule",
+      "fromTable": "F_AP_Invoice_Distribution",
+      "fromColumn": "INVOICE_ID",
+      "toTable": "F_AP_Aging_Schedule",
+      "toColumn": "INVOICE_ID",
+      "crossFilteringBehavior": "bothDirections",
+      "isActive": false
+    },
+    {
+      "name": "F_AP_Invoice_Distribution_to_D_COA",
+      "fromTable": "F_AP_Invoice_Distribution",
+      "fromColumn": "DIST_CODE_COMBINATION_ID",
+      "toTable": "D_COA",
+      "toColumn": "CODE_COMBINATION_ID",
       "crossFilteringBehavior": "bothDirections",
       "isActive": false
     }

@@ -1,0 +1,84 @@
+name: ap_aging_schedule
+grain: ap_payment_schedule_as_of
+primary_key: [INVOICE_ID, PAYMENT_NUM, AS_OF_DATE]
+foreign_keys:
+  - VENDOR_ID -> D_Supplier.SUPPLIER_ID
+  - ORG_ID -> D_BusinessUnit.ORG_ID
+refresh:
+  cadence: daily
+  partitioning: by_snapshot(AS_OF_DATE)
+columns:
+  - {name: AS_OF_DATE, type: DATE, required: true}
+  - {name: SCHEDULE_KEY, type: VARCHAR2(80), required: true}
+  - {name: INVOICE_ID, type: NUMBER, required: true}
+  - {name: PAYMENT_NUM, type: NUMBER, required: true}
+  - {name: ORG_ID, type: NUMBER}
+  - {name: VENDOR_ID, type: NUMBER}
+  - {name: VENDOR_SITE_ID, type: NUMBER}
+  - {name: INVOICE_NUM, type: VARCHAR2(50)}
+  - {name: INVOICE_DATE, type: DATE}
+  - {name: INVOICE_RECEIVED_DATE, type: DATE}
+  - {name: DUE_DATE, type: DATE, required: true}
+  - {name: TERMS_ID, type: NUMBER}
+  - {name: TERMS_DATE, type: DATE}
+  - {name: INVOICE_TYPE_LOOKUP_CODE, type: VARCHAR2(30)}
+  - {name: INVOICE_CURRENCY_CODE, type: VARCHAR2(15)}
+  - {name: PAYMENT_CURRENCY_CODE, type: VARCHAR2(15)}
+  - {name: PAYMENT_METHOD_CODE, type: VARCHAR2(30)}
+  - {name: PAYMENT_METHOD_LOOKUP_CODE, type: VARCHAR2(30)}
+  - {name: PAY_GROUP_LOOKUP_CODE, type: VARCHAR2(30)}
+  - {name: SOURCE, type: VARCHAR2(80)}
+  - {name: PO_HEADER_ID, type: NUMBER}
+  - {name: PAYMENT_STATUS_FLAG_SCHEDULE, type: VARCHAR2(1)}
+  - {name: PAYMENT_STATUS_FLAG_INVOICE, type: VARCHAR2(1)}
+  - {name: HOLD_FLAG, type: VARCHAR2(1)}
+  - {name: HELD_BY, type: NUMBER}
+  - {name: HOLD_DATE, type: DATE}
+  - {name: IBY_HOLD_REASON, type: VARCHAR2(240)}
+  - {name: GROSS_AMOUNT, type: NUMBER}
+  - {name: AMOUNT_REMAINING, type: NUMBER, required: true}
+  - {name: OPEN_AMOUNT, type: NUMBER, required: true}
+  - {name: INVOICE_AMOUNT, type: NUMBER}
+  - {name: AMOUNT_PAID, type: NUMBER}
+  - {name: PAYMENT_AMOUNT_TOTAL, type: NUMBER}
+  - {name: DAYS_PAST_DUE, type: NUMBER}
+  - {name: AGING_BUCKET, type: VARCHAR2(30)}
+  - {name: AGING_DIRECTION, type: VARCHAR2(20)}
+  - {name: IS_CURRENT, type: NUMBER}
+  - {name: IS_PAST_DUE, type: NUMBER}
+  - {name: IS_DUE_NEXT_7_DAYS, type: NUMBER}
+  - {name: IS_DUE_NEXT_30_DAYS, type: NUMBER}
+  - {name: IS_CREDIT_MEMO, type: NUMBER}
+  - {name: IS_DEBIT_MEMO, type: NUMBER}
+  - {name: IS_PREPAYMENT, type: NUMBER}
+  - {name: IS_CANCELLED, type: NUMBER}
+  - {name: IS_ON_HOLD, type: NUMBER}
+  - {name: IS_FULLY_PAID, type: NUMBER}
+  - {name: IS_UNPAID, type: NUMBER}
+  - {name: IS_PARTIALLY_PAID, type: NUMBER}
+  - {name: HAS_PROJECT_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_CAPITAL_PROJECT_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_PO_MATCHED_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_UNACCOUNTED_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_ASSET_RELATED_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_REVERSAL_DISTRIBUTION, type: NUMBER}
+  - {name: DISTRIBUTION_COUNT, type: NUMBER}
+  - {name: DISTRIBUTION_TOTAL_AMOUNT, type: NUMBER}
+  - {name: PROJECT_COUNT, type: NUMBER}
+  - {name: PO_DISTRIBUTION_COUNT, type: NUMBER}
+source_notes:
+  oracle_release: 26B
+  source_path: AP_PAYMENT_SCHEDULES_ALL joined to AP_INVOICES_ALL; enriched by invoice-level distribution bridge
+  join_logic:
+    - AP_PAYMENT_SCHEDULES_ALL.INVOICE_ID = AP_INVOICES_ALL.INVOICE_ID
+    - bridge on AP_INVOICES_ALL.INVOICE_ID only (no join to AP_INVOICE_DISTRIBUTIONS_ALL at schedule grain)
+  open_amount: AMOUNT_REMAINING on payment schedule; filter COALESCE(AMOUNT_REMAINING, 0) <> 0
+  parameter: :as_of_date or @AS_OF_DATE for BIP
+  anti_pattern: Do not join payment schedules to invoice distributions and sum AMOUNT_REMAINING
+validation_notes:
+  - Grain must be unique on INVOICE_ID, PAYMENT_NUM, AS_OF_DATE
+  - SUM(AMOUNT_REMAINING) must reconcile to AP_PAYMENT_SCHEDULES_ALL under identical filters
+  - LEFT JOIN bridge must not change SUM(AMOUNT_REMAINING)
+  - Run sql/ap/diagnostics/ap_aging_reconciliation_checks.sql after extract
+  - Profile INVOICE_TYPE_LOOKUP_CODE before finalizing credit memo CASE logic
+version: 26B

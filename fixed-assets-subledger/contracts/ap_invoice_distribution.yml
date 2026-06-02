@@ -1,0 +1,54 @@
+name: ap_invoice_distribution
+grain: ap_invoice_distribution_line
+primary_key: [INVOICE_DISTRIBUTION_ID]
+foreign_keys:
+  - INVOICE_ID -> ap_aging_schedule.INVOICE_ID
+  - DIST_CODE_COMBINATION_ID -> D_COA.CODE_COMBINATION_ID
+  - PJC_PROJECT_ID -> D_Project.PROJECT_ID
+refresh:
+  cadence: daily
+  partitioning: by_snapshot(AS_OF_DATE)
+columns:
+  - {name: AS_OF_DATE, type: DATE, required: true}
+  - {name: INVOICE_DISTRIBUTION_ID, type: NUMBER, required: true}
+  - {name: INVOICE_ID, type: NUMBER, required: true}
+  - {name: DISTRIBUTION_LINE_NUMBER, type: NUMBER}
+  - {name: LINE_TYPE_LOOKUP_CODE, type: VARCHAR2(30)}
+  - {name: AMOUNT, type: NUMBER}
+  - {name: BASE_AMOUNT, type: NUMBER}
+  - {name: ACCOUNTING_DATE, type: DATE}
+  - {name: PERIOD_NAME, type: VARCHAR2(15)}
+  - {name: DIST_CODE_COMBINATION_ID, type: NUMBER}
+  - {name: MATCH_STATUS_FLAG, type: VARCHAR2(1)}
+  - {name: POSTED_FLAG, type: VARCHAR2(1)}
+  - {name: PO_DISTRIBUTION_ID, type: NUMBER}
+  - {name: RCV_TRANSACTION_ID, type: NUMBER}
+  - {name: PJC_PROJECT_ID, type: NUMBER}
+  - {name: PJC_TASK_ID, type: NUMBER}
+  - {name: PJC_EXPENDITURE_TYPE_ID, type: NUMBER}
+  - {name: PJC_EXPENDITURE_ITEM_DATE, type: DATE}
+  - {name: PJC_ORGANIZATION_ID, type: NUMBER}
+  - {name: PJC_BILLABLE_FLAG, type: VARCHAR2(1)}
+  - {name: PA_ADDITION_FLAG, type: VARCHAR2(1)}
+  - {name: ASSETS_ADDITION_FLAG, type: VARCHAR2(1)}
+  - {name: ASSETS_TRACKING_FLAG, type: VARCHAR2(1)}
+  - {name: ASSET_CATEGORY_ID, type: NUMBER}
+  - {name: IS_PROJECT_RELATED, type: NUMBER}
+  - {name: IS_PO_MATCHED, type: NUMBER}
+  - {name: IS_ACCOUNTED, type: NUMBER}
+  - {name: IS_REVERSAL, type: NUMBER}
+  - {name: IS_ASSET_RELATED, type: NUMBER}
+  - {name: VENDOR_ID, type: NUMBER}
+  - {name: INVOICE_NUM, type: VARCHAR2(50)}
+  - {name: INVOICE_DATE, type: DATE}
+  - {name: ORG_ID, type: NUMBER}
+source_notes:
+  oracle_release: 26B
+  source_path: AP_INVOICE_DISTRIBUTIONS_ALL joined to AP_INVOICES_ALL
+  join_logic:
+    - AP_INVOICE_DISTRIBUTIONS_ALL.INVOICE_ID = AP_INVOICES_ALL.INVOICE_ID
+  drill_through: Use for COA, project, PO, and asset context; never sum schedule AMOUNT_REMAINING at this grain
+validation_notes:
+  - Grain must be unique on INVOICE_DISTRIBUTION_ID
+  - Do not blend with ap_aging_schedule amounts in the same additive measure
+version: 26B

@@ -12,6 +12,7 @@ In scope:
 
 - Oracle Fusion Fixed Assets subledger reporting
 - Oracle Fusion AP supplier spend history (SLA-linked)
+- Oracle Fusion AP aging (payment schedule exposure, as-of snapshot)
 - OTBI / BI Publisher extract SQL under `sql/bip/`
 - Column contracts under `contracts/`
 - Power BI query and model metadata under `powerbi/`
@@ -62,8 +63,24 @@ The model is contracts-first. Update the contract before changing SQL or Power B
 | `F_Depreciation_Period` | Asset x book x period, aggregated from OTBI distribution rows | `ASSET_ID`, `BOOK_TYPE_CODE`, `PERIOD_COUNTER` |
 | `F_Asset_Balance_Period` | Asset x book x period snapshot, aggregated from OTBI distribution rows | `ASSET_ID`, `BOOK_TYPE_CODE`, `PERIOD_COUNTER` |
 | `Supplier_History` | AP invoice distribution accounting event | `INVOICE_DISTRIBUTION_ID`, `AE_HEADER_ID` |
+| `F_AP_Aging_Schedule` | AP payment schedule as-of snapshot | `INVOICE_ID`, `PAYMENT_NUM`, `AS_OF_DATE` |
+| `F_AP_Invoice_Distribution` | AP invoice distribution line | `INVOICE_DISTRIBUTION_ID` |
 
 `CODE_COMBINATION_ID` is the canonical COA key for account-level analysis.
+
+## AP Aging
+
+- Contracts: `contracts/ap_aging_schedule.yml`, `contracts/ap_invoice_distribution.yml`, `contracts/ap_invoice_distribution_classification.yml`
+- Layered SQL (review / Fabric path): `sql/ap/`
+- BIP extracts: `sql/bip/ap_aging_schedule.sql`, `sql/bip/ap_invoice_distribution.sql`
+- CSV patterns: `ap_aging_schedule_{yyyymmdd}.csv`, `ap_invoice_distribution_{yyyymmdd}.csv`
+- Parameter: `@AS_OF_DATE` in BIP (bind default `TRUNC(SYSDATE)`)
+- Power BI: `powerbi/queries/F_AP_Aging_Schedule.m`, `F_AP_Invoice_Distribution.m`
+- Bus matrix: `docs/bus-matrix-ap.md`
+- Validation: `sql/ap/diagnostics/ap_aging_reconciliation_checks.sql`, `ap_status_value_profiles.sql`
+- **Grain rule:** Do not join payment schedules to distributions and sum `AMOUNT_REMAINING`. Use the invoice-level bridge on the aging fact or drill through `F_AP_Invoice_Distribution`.
+- **Conformed dimensions:** `D_Supplier`, `D_Time`, and `D_COA` are external to this repo; facts ship with `VENDOR_ID`, `DUE_DATE`, and `DIST_CODE_COMBINATION_ID`.
+- After first Fusion export, run profiling diagnostics and tune credit memo `CASE` logic per tenant lookup values.
 
 ## Supplier Spend History Contract
 
@@ -105,6 +122,7 @@ contracts/             Column contracts and grain declarations
 docs/                  Bus matrix, ERD notes, and lineage
 powerbi/               Power BI model metadata, measures, and M queries
 scripts/               Lightweight validation scripts
+sql/ap/                AP layered SQL (staging, marts, diagnostics)
 sql/bip/               BI Publisher / OTBI logical SQL extracts
 sql/ddl/               External table staging DDL
 sql/views/             Convenience views, not authoritative contracts

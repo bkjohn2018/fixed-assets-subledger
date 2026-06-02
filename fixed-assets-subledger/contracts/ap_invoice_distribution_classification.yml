@@ -1,0 +1,32 @@
+name: ap_invoice_distribution_classification
+grain: ap_invoice_distribution_classification
+primary_key: [INVOICE_ID]
+foreign_keys:
+  - INVOICE_ID -> ap_aging_schedule.INVOICE_ID
+refresh:
+  cadence: daily
+  partitioning: by_snapshot(AS_OF_DATE)
+columns:
+  - {name: AS_OF_DATE, type: DATE, required: true}
+  - {name: INVOICE_ID, type: NUMBER, required: true}
+  - {name: HAS_PROJECT_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_CAPITAL_PROJECT_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_PO_MATCHED_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_UNACCOUNTED_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_ASSET_RELATED_DISTRIBUTION, type: NUMBER}
+  - {name: HAS_REVERSAL_DISTRIBUTION, type: NUMBER}
+  - {name: DISTRIBUTION_COUNT, type: NUMBER}
+  - {name: DISTRIBUTION_TOTAL_AMOUNT, type: NUMBER}
+  - {name: PROJECT_COUNT, type: NUMBER}
+  - {name: PO_DISTRIBUTION_COUNT, type: NUMBER}
+  - {name: ACCOUNTED_DISTRIBUTION_COUNT, type: NUMBER}
+  - {name: UNACCOUNTED_DISTRIBUTION_COUNT, type: NUMBER}
+source_notes:
+  oracle_release: 26B
+  source_path: Aggregated from AP_INVOICE_DISTRIBUTIONS_ALL at INVOICE_ID grain
+  purpose: Safe enrichment for aging schedule without row multiplication
+validation_notes:
+  - Grain must be unique on INVOICE_ID
+  - DISTRIBUTION_TOTAL_AMOUNT is not additive with schedule AMOUNT_REMAINING
+  - Merged into ap_aging_schedule BIP extract via LEFT JOIN
+version: 26B

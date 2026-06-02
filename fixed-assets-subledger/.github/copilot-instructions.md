@@ -35,9 +35,16 @@ Purpose: short, actionable guidance to help an AI agent be immediately productiv
 
 4) Files & examples to check when making changes
 - Facts: `sql/bip/fa_balances.sql`, `sql/bip/fa_deprn_period.sql`, `sql/bip/fa_transactions_header.sql`, `sql/bip/fa_transactions_distribution.sql`.
-- Contracts: `contracts/fa_balances.yml`, `contracts/fa_deprn_period.yml`, `contracts/fa_transactions.yml`, `contracts/fa_transactions_distribution.yml`.
-- Power BI: `powerbi/queries/F_Asset_Transaction.m`, `powerbi/model.json`.
-- Docs: `docs/bus-matrix.md`, `docs/data-lineage.md`.
+- AP aging: `sql/bip/ap_aging_schedule.sql`, `sql/bip/ap_invoice_distribution.sql`, layered SQL under `sql/ap/`.
+- Contracts: `contracts/fa_balances.yml`, `contracts/fa_deprn_period.yml`, `contracts/fa_transactions.yml`, `contracts/fa_transactions_distribution.yml`, `contracts/ap_aging_schedule.yml`, `contracts/ap_invoice_distribution.yml`.
+- Power BI: `powerbi/queries/F_Asset_Transaction.m`, `F_AP_Aging_Schedule.m`, `powerbi/model.json`, `powerbi/measures.dax`.
+- Docs: `docs/bus-matrix.md`, `docs/bus-matrix-ap.md`, `docs/data-lineage.md`.
+
+AP aging conventions:
+- Schedule grain is canonical for open exposure; use `AMOUNT_REMAINING` on `F_AP_Aging_Schedule` only.
+- Do not join schedules to distributions and sum schedule amounts.
+- Invoice-level bridge flags are non-additive with schedule amounts.
+- Profile `INVOICE_TYPE_LOOKUP_CODE` before hard-coding credit memo logic (`sql/ap/diagnostics/ap_status_value_profiles.sql`).
 
 5) Integration & external dependencies
 - Upstream: Oracle Fusion Cloud (OTBI/BICC). Exports are CSVs named per-contract conventions (e.g. `fa_transactions_202501.csv`).
