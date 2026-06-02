@@ -3,6 +3,53 @@
 [Cost Additions]        := CALCULATE(SUM(F_Asset_Transaction[COST_DELTA]), F_Asset_Transaction[TRANSACTION_TYPE_CODE]="ADDITION")
 [Transactions Count]    := COUNTROWS(F_Asset_Transaction)
 
+-- AP Aging (schedule grain; use AMOUNT_REMAINING only on F_AP_Aging_Schedule)
+[AP Open Amount] :=
+    SUM(F_AP_Aging_Schedule[AMOUNT_REMAINING])
+
+[AP Gross Unpaid Invoices] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[IS_CREDIT_MEMO] = 0
+    )
+
+[AP Open Credits] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[IS_CREDIT_MEMO] = 1
+    )
+
+[AP Net Exposure] :=
+    [AP Gross Unpaid Invoices] + [AP Open Credits]
+
+[AP Held Amount] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[IS_ON_HOLD] = 1
+    )
+
+[AP Project Related Amount] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[HAS_PROJECT_DISTRIBUTION] = 1
+    )
+
+[AP Past Due Amount] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[IS_PAST_DUE] = 1
+    )
+
+[AP Invoice Count] :=
+    DISTINCTCOUNT(F_AP_Aging_Schedule[INVOICE_ID])
+
+[AP Supplier Count] :=
+    DISTINCTCOUNT(F_AP_Aging_Schedule[VENDOR_ID])
+
+[AP Distribution Line Amount] :=
+    SUM(F_AP_Invoice_Distribution[AMOUNT])
+
 -- Notes on USERELATIONSHIP:
 -- Use inactive relationship for TRX date filtering:
 -- [Depreciation YTD] := CALCULATE([Depreciation (Period)], USERELATIONSHIP(D_Time[PERIOD_COUNTER], F_Depreciation_Period[PERIOD_COUNTER]))
+-- AP drill-through: USERELATIONSHIP(F_AP_Aging_Schedule[INVOICE_ID], F_AP_Invoice_Distribution[INVOICE_ID])
