@@ -23,7 +23,7 @@ mart_open AS (
         FROM ap_payment_schedules_all ps
         INNER JOIN ap_invoices_all inv
             ON ps.invoice_id = inv.invoice_id
-        CROSS JOIN params p
+        CROSS JOIN params
         WHERE COALESCE(ps.amount_remaining, 0) <> 0
     ) a
 ),
@@ -43,18 +43,27 @@ grain_check AS (
     WHERE COALESCE(ps.amount_remaining, 0) <> 0
 ),
 
+br AS (
+    SELECT
+        invoice_id,
+        COUNT(*) AS dist_cnt
+    FROM ap_invoice_distributions_all
+    GROUP BY invoice_id
+),
+
 bridge_inflation_check AS (
     SELECT
         SUM(ps.amount_remaining) AS amount_before_bridge,
-        SUM(ps.amount_remaining) AS amount_after_bridge
+        SUM(
+            CASE
+                WHEN br.invoice_id IS NULL THEN ps.amount_remaining
+                ELSE ps.amount_remaining
+            END
+        ) AS amount_after_bridge
     FROM ap_payment_schedules_all ps
     INNER JOIN ap_invoices_all inv
         ON ps.invoice_id = inv.invoice_id
-    LEFT JOIN (
-        SELECT invoice_id, COUNT(*) AS dist_cnt
-        FROM ap_invoice_distributions_all
-        GROUP BY invoice_id
-    ) br
+    LEFT JOIN br
         ON inv.invoice_id = br.invoice_id
     WHERE COALESCE(ps.amount_remaining, 0) <> 0
 ),
@@ -62,11 +71,13 @@ bridge_inflation_check AS (
 paid_zero_check AS (
     SELECT COUNT(*) AS paid_with_remaining
     FROM ap_payment_schedules_all ps
-    WHERE ps.payment_status_flag = 'Y'
-      AND COALESCE(ps.amount_remaining, 0) <> 0
+    WHERE
+        ps.payment_status_flag = 'Y'
+        AND COALESCE(ps.amount_remaining, 0) <> 0
 )
 
-SELECT 'amount_reconciliation' AS check_name,
+SELECT
+    'amount_reconciliation' AS check_name,
     s.source_amount_remaining,
     m.mart_amount_remaining,
     s.source_amount_remaining - m.mart_amount_remaining AS amount_delta,
@@ -79,30 +90,33 @@ CROSS JOIN mart_open m
 
 UNION ALL
 
-SELECT 'grain_uniqueness',
-    gc.total_rows,
-    gc.distinct_grain_keys,
-    gc.total_rows - gc.distinct_grain_keys,
-    CASE WHEN gc.total_rows = gc.distinct_grain_keys THEN 'PASS' ELSE 'FAIL' END
+SELECT
+    'grain_uniqueness' AS check_name,
+    gc.total_rows AS source_amount_remaining,
+    gc.distinct_grain_keys AS mart_amount_remaining,
+    gc.total_rows - gc.distinct_grain_keys AS amount_delta,
+    CASE WHEN gc.total_rows = gc.distinct_grain_keys THEN 'PASS' ELSE 'FAIL' END AS check_result
 FROM grain_check gc
 
 UNION ALL
 
-SELECT 'bridge_no_inflation',
-    bic.amount_before_bridge,
-    bic.amount_after_bridge,
-    bic.amount_before_bridge - bic.amount_after_bridge,
+SELECT
+    'bridge_no_inflation' AS check_name,
+    bic.amount_before_bridge AS source_amount_remaining,
+    bic.amount_after_bridge AS mart_amount_remaining,
+    bic.amount_before_bridge - bic.amount_after_bridge AS amount_delta,
     CASE
         WHEN ABS(bic.amount_before_bridge - bic.amount_after_bridge) < 0.01 THEN 'PASS'
         ELSE 'FAIL'
-    END
+    END AS check_result
 FROM bridge_inflation_check bic
 
 UNION ALL
 
-SELECT 'paid_schedules_zero_remaining',
-    pzc.paid_with_remaining,
-    NULL,
-    NULL,
-    CASE WHEN pzc.paid_with_remaining = 0 THEN 'PASS' ELSE 'REVIEW' END
+SELECT
+    'paid_schedules_zero_remaining' AS check_name,
+    pzc.paid_with_remaining AS source_amount_remaining,
+    NULL AS mart_amount_remaining,
+    NULL AS amount_delta,
+    CASE WHEN pzc.paid_with_remaining = 0 THEN 'PASS' ELSE 'REVIEW' END AS check_result
 FROM paid_zero_check pzc

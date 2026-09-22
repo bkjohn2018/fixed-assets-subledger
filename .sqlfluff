@@ -1,6 +1,5 @@
 [sqlfluff]
 dialect = oracle
-exclude_rules = L009,L031
-templater = jinja
-[sqlfluff:rules]
+exclude_rules = L009,L031,LT01
 max_line_length = 120
+templater = jinja

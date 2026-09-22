@@ -34,6 +34,8 @@ keys AS (
     SELECT project_asset_line_id FROM posted
 )
 
+-- Preserve established staging output column order.
+-- noqa: disable=ST06
 SELECT
     k.project_asset_line_id,
     COALESCE(ma.mass_addition_count, 0) AS mass_addition_count,
@@ -48,3 +50,4 @@ LEFT JOIN mass_additions ma
     ON k.project_asset_line_id = ma.project_asset_line_id
 LEFT JOIN posted p
     ON k.project_asset_line_id = p.project_asset_line_id
+-- noqa: enable=ST06

@@ -26,6 +26,7 @@ SELECT
     x.is_capitalization_candidate
 FROM stg_project_cost c
 INNER JOIN int_project_capitalization_classification x
-    ON c.expenditure_item_id = x.expenditure_item_id
-    AND c.line_num = x.line_num
-    AND x.record_grain = 'COST'
+    ON
+        c.expenditure_item_id = x.expenditure_item_id
+        AND c.line_num = x.line_num
+        AND x.record_grain = 'COST'

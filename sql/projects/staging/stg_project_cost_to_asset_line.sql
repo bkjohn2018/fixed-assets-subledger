@@ -14,5 +14,6 @@ FROM pjc_prj_asset_ln_dets d
 INNER JOIN pjc_prj_asset_lns_all pal
     ON d.project_asset_line_detail_id = pal.project_asset_line_detail_id
 INNER JOIN pjc_cost_dist_lines_all cdl
-    ON d.expenditure_item_id = cdl.expenditure_item_id
-    AND d.line_num = cdl.line_num
+    ON
+        d.expenditure_item_id = cdl.expenditure_item_id
+        AND d.line_num = cdl.line_num

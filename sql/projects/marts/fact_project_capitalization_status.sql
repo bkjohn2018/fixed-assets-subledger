@@ -1,6 +1,8 @@
 -- Mart: F_Project_Capitalization_Status
 -- Grain and output columns match contracts/projects/project_capitalization_status.yml.
 
+-- Preserve contract column order.
+-- noqa: disable=ST06
 SELECT
     l.project_asset_line_id,
     x.as_of_date,
@@ -22,7 +24,9 @@ SELECT
     x.is_capitalization_candidate
 FROM stg_project_asset_line l
 INNER JOIN int_project_capitalization_classification x
-    ON l.project_asset_line_id = x.project_asset_line_id
-    AND x.record_grain = 'ASSET_LINE'
+    ON
+        l.project_asset_line_id = x.project_asset_line_id
+        AND x.record_grain = 'ASSET_LINE'
 LEFT JOIN stg_project_capitalization_evidence e
     ON l.project_asset_line_id = e.project_asset_line_id
+-- noqa: enable=ST06

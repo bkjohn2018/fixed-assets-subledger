@@ -1,0 +1,6 @@
+# BI Publisher/OTBI extracts contain @ parameters and logical SQL that the
+# SQLFluff Oracle parser does not support.
+sql/bip/
+
+# Oracle external-table ORGANIZATION clauses are not supported by SQLFluff.
+sql/fa/ddl/

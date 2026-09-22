@@ -18,8 +18,9 @@ asset_cost_flags AS (
         END AS capitalizable_flag
     FROM stg_project_cost_to_asset_line b
     INNER JOIN stg_project_cost c
-        ON b.expenditure_item_id = c.expenditure_item_id
-        AND b.line_num = c.line_num
+        ON
+            b.expenditure_item_id = c.expenditure_item_id
+            AND b.line_num = c.line_num
     WHERE b.detail_reversal_flag <> 'Y'
     GROUP BY b.project_asset_line_id
 ),
@@ -76,16 +77,19 @@ cost_rows AS (
             WHEN COALESCE(ce.has_capital_hold, 0) = 1 THEN 'HELD'
             WHEN COALESCE(ce.has_rejection, 0) = 1 THEN 'TRANSFER_REJECTED'
             WHEN COALESCE(ce.mass_addition_count, 0) > 0 THEN 'TRANSFERRED_NOT_POSTED'
-            WHEN COALESCE(ce.asset_line_count, 0) > 0
+            WHEN
+                COALESCE(ce.asset_line_count, 0) > 0
                 AND ce.unassigned_count = ce.asset_line_count THEN 'GENERATED_UNASSIGNED'
-            WHEN COALESCE(ce.asset_line_count, 0) = 0
+            WHEN
+                COALESCE(ce.asset_line_count, 0) = 0
                 AND c.capitalizable_flag = 'Y'
                 AND TRUNC(p.as_of_date) - TRUNC(c.prvdr_gl_date) < p.grace_days
                 THEN 'CAPITALIZABLE_NOT_GENERATED'
             ELSE 'POLICY_REVIEW_REQUIRED'
         END AS lifecycle_status,
         CASE
-            WHEN c.capitalizable_flag = 'Y'
+            WHEN
+                c.capitalizable_flag = 'Y'
                 AND TRUNC(p.as_of_date) - TRUNC(c.prvdr_gl_date) >= p.grace_days
                 AND COALESCE(ce.posted_asset_count, 0) = 0
                 AND COALESCE(ce.has_capital_hold, 0) = 0 THEN 1
@@ -94,8 +98,9 @@ cost_rows AS (
     FROM stg_project_cost c
     CROSS JOIN params p
     LEFT JOIN cost_evidence ce
-        ON c.expenditure_item_id = ce.expenditure_item_id
-        AND c.line_num = ce.line_num
+        ON
+            c.expenditure_item_id = ce.expenditure_item_id
+            AND c.line_num = ce.line_num
 ),
 
 asset_line_rows AS (
@@ -123,7 +128,8 @@ asset_line_rows AS (
             ELSE 'POLICY_REVIEW_REQUIRED'
         END AS lifecycle_status,
         CASE
-            WHEN COALESCE(cf.capitalizable_flag, 'N') = 'Y'
+            WHEN
+                COALESCE(cf.capitalizable_flag, 'N') = 'Y'
                 AND TRUNC(p.as_of_date) - TRUNC(CAST(l.creation_date AS DATE)) >= p.grace_days
                 AND COALESCE(e.posted_asset_count, 0) = 0
                 AND l.capital_hold_flag <> 'Y'

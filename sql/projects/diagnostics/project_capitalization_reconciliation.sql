@@ -27,11 +27,12 @@ SELECT
     COALESCE(m.mart_amount, 0) - COALESCE(s.source_amount, 0) AS difference_amount
 FROM source_cost s
 FULL OUTER JOIN mart_cost m
-    ON s.currency_code = m.currency_code
-    AND (
-        s.code_combination_id = m.code_combination_id
-        OR (s.code_combination_id IS NULL AND m.code_combination_id IS NULL)
-    );
+    ON
+        s.currency_code = m.currency_code
+        AND (
+            s.code_combination_id = m.code_combination_id
+            OR (s.code_combination_id IS NULL AND m.code_combination_id IS NULL)
+        );
 
 WITH source_posted AS (
     SELECT
@@ -51,5 +52,6 @@ SELECT
 FROM source_posted s
 FULL OUTER JOIN fact_project_capitalization_status f
     ON s.project_asset_line_id = f.project_asset_line_id
-WHERE COALESCE(f.posted_fixed_assets_cost, 0) <> COALESCE(s.source_posted_cost, 0)
+WHERE
+    COALESCE(f.posted_fixed_assets_cost, 0) <> COALESCE(s.source_posted_cost, 0)
     OR COALESCE(f.current_asset_cost, 0) <> COALESCE(f.posted_fixed_assets_cost, 0);

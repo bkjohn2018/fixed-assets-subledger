@@ -1,6 +1,8 @@
 -- Staging normalization: Projects asset lines with asset definition context
 -- Grain: PROJECT_ASSET_LINE_ID
 
+-- Preserve contract-compatible output column order.
+-- noqa: disable=ST06
 SELECT
     pal.project_asset_line_id,
     pal.project_asset_line_detail_id,
@@ -27,5 +29,7 @@ SELECT
     pa.fa_asset_id
 FROM pjc_prj_asset_lns_all pal
 LEFT JOIN pjc_prj_assets_all pa
-    ON pal.project_asset_id = pa.project_asset_id
-    AND pal.project_asset_id <> 0
+    ON
+        pal.project_asset_id = pa.project_asset_id
+        AND pal.project_asset_id <> 0
+-- noqa: enable=ST06

@@ -1,6 +1,8 @@
 -- Staging normalization: Oracle Projects cost distribution lines
 -- Grain: EXPENDITURE_ITEM_ID + LINE_NUM
 
+-- Preserve contract-compatible output column order.
+-- noqa: disable=ST06
 SELECT
     cdl.expenditure_item_id,
     cdl.line_num,
@@ -18,3 +20,4 @@ SELECT
     cdl.acct_raw_cost,
     cdl.acct_burdened_cost
 FROM pjc_cost_dist_lines_all cdl
+-- noqa: enable=ST06

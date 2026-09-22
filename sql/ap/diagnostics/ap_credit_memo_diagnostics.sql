@@ -27,8 +27,9 @@ open_credits AS (
     INNER JOIN ap_invoices_all inv
         ON ps.invoice_id = inv.invoice_id
     CROSS JOIN params p
-    WHERE COALESCE(ps.amount_remaining, 0) <> 0
-      AND UPPER(inv.invoice_type_lookup_code) LIKE '%CREDIT%'
+    WHERE
+        COALESCE(ps.amount_remaining, 0) <> 0
+        AND UPPER(inv.invoice_type_lookup_code) LIKE '%CREDIT%'
 )
 
 SELECT

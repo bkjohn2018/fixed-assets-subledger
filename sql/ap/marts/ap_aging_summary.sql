@@ -35,12 +35,13 @@ schedule_fact AS (
             END AS aging_bucket,
             COALESCE(
                 (
-                    SELECT MAX(
-                        CASE
-                            WHEN aid.pjc_project_id IS NOT NULL OR aid.pa_addition_flag IS NOT NULL THEN 1
-                            ELSE 0
-                        END
-                    )
+                    SELECT
+                        MAX(
+                            CASE
+                                WHEN aid.pjc_project_id IS NOT NULL OR aid.pa_addition_flag IS NOT NULL THEN 1
+                                ELSE 0
+                            END
+                        )
                     FROM ap_invoice_distributions_all aid
                     WHERE aid.invoice_id = ps.invoice_id
                 ),

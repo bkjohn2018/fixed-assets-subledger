@@ -2,6 +2,8 @@
 -- Source: AP_PAYMENT_SCHEDULES_ALL (Oracle Fusion 26B)
 
 WITH payment_schedules AS (
+    -- Preserve downstream output column order.
+    -- noqa: disable=ST06
     SELECT
         ps.invoice_id,
         ps.payment_num,
@@ -38,6 +40,7 @@ WITH payment_schedules AS (
         ps.amount_remaining AS open_amount,
         ps.gross_amount AS schedule_gross_amount
     FROM ap_payment_schedules_all ps
+    -- noqa: enable=ST06
 )
 
 SELECT

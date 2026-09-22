@@ -86,6 +86,8 @@ distribution_bridge AS (
 ),
 
 aging AS (
+    -- Preserve contract-compatible output column order.
+    -- noqa: disable=ST06
     SELECT
         p.as_of_date,
         CAST(ps.invoice_id AS VARCHAR2(40)) || '-' || CAST(ps.payment_num AS VARCHAR2(20)) AS schedule_key,
@@ -167,6 +169,7 @@ aging AS (
     LEFT JOIN distribution_bridge br
         ON inv.invoice_id = br.invoice_id
     CROSS JOIN params p
+    -- noqa: enable=ST06
 )
 
 SELECT
