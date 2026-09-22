@@ -1,0 +1,696 @@
+{
+  "name": "CapExLifecycle",
+  "id": "CapExLifecycle",
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "en-US",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "discourageImplicitMeasures": true,
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"D_Asset\",\"D_Book\",\"D_COA\",\"D_Time\",\"D_Project\",\"D_Task\",\"F_Asset_Balance_Period\",\"F_Asset_Transaction\",\"F_Depreciation_Period\",\"F_Project_Cost\",\"F_Project_Asset_Line\",\"B_Project_Cost_To_Asset_Line\",\"F_Project_Capitalization_Status\"]"
+      },
+      {
+        "name": "_RepoReadme",
+        "value": "Stub tables keep the bus shape for this repo. Swap each partition M for the CSV loaders in powerbi/queries/<domain>/ (point File.Contents at ../../data/... from this folder), then import powerbi/measures.dax in Tabular Editor or Desktop."
+      }
+    ],
+    "tables": [
+      {
+        "name": "D_Project",
+        "columns": [
+          {
+            "name": "PROJECT_ID",
+            "dataType": "Int64",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_Project",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [PROJECT_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "D_Task",
+        "columns": [
+          {
+            "name": "TASK_ID",
+            "dataType": "Int64",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_Task",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [TASK_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "D_Asset",
+        "columns": [
+          {
+            "name": "ASSET_ID",
+            "dataType": "Int64",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_Asset",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [ASSET_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "D_Book",
+        "columns": [
+          {
+            "name": "BOOK_TYPE_CODE",
+            "dataType": "String",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_Book",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [BOOK_TYPE_CODE = type text], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "D_COA",
+        "columns": [
+          {
+            "name": "CODE_COMBINATION_ID",
+            "dataType": "Int64",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_COA",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [CODE_COMBINATION_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "D_Time",
+        "columns": [
+          {
+            "name": "PERIOD_COUNTER",
+            "dataType": "Int64",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PERIOD_NAME",
+            "dataType": "String",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DATE",
+            "dataType": "DateTime",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "D_Time",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [PERIOD_COUNTER = Int64.Type, PERIOD_NAME = type text, DATE = type date], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Asset_Transaction",
+        "columns": [
+          { "name": "TRANSACTION_HEADER_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "DISTRIBUTION_LINE_NUMBER", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "TRANSACTION_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "TRX_DATE", "dataType": "DateTime", "summarizeBy": "none" },
+          { "name": "ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "ASSET_NUMBER", "dataType": "String", "summarizeBy": "none" },
+          { "name": "BOOK_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "CATEGORY_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "COST_DELTA", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_RESERVE_DELTA", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "PROCEEDS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "GAIN_LOSS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "UNITS_DELTA", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "CODE_COMBINATION_ID", "dataType": "Int64", "summarizeBy": "none" }
+        ],
+        "partitions": [
+          {
+            "name": "F_Asset_Transaction",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [TRANSACTION_HEADER_ID = Int64.Type, DISTRIBUTION_LINE_NUMBER = Int64.Type, TRANSACTION_TYPE_CODE = type text, TRX_DATE = type date, ASSET_ID = Int64.Type, ASSET_NUMBER = type text, BOOK_TYPE_CODE = type text, CATEGORY_ID = Int64.Type, COST_DELTA = type number, DEPRN_RESERVE_DELTA = type number, PROCEEDS = type number, GAIN_LOSS = type number, UNITS_DELTA = type number, CODE_COMBINATION_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Depreciation_Period",
+        "columns": [
+          { "name": "ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "BOOK_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "PERIOD_COUNTER", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PERIOD_NAME", "dataType": "String", "summarizeBy": "none" },
+          { "name": "DEPRN_AMOUNT", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_BONUS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_CATCHUP", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_YTD", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_ITD", "dataType": "Decimal", "summarizeBy": "sum" }
+        ],
+        "partitions": [
+          {
+            "name": "F_Depreciation_Period",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [ASSET_ID = Int64.Type, BOOK_TYPE_CODE = type text, PERIOD_COUNTER = Int64.Type, PERIOD_NAME = type text, DEPRN_AMOUNT = type number, DEPRN_BONUS = type number, DEPRN_CATCHUP = type number, DEPRN_YTD = type number, DEPRN_ITD = type number], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Asset_Balance_Period",
+        "columns": [
+          { "name": "ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "BOOK_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "PERIOD_COUNTER", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PERIOD_NAME", "dataType": "String", "summarizeBy": "none" },
+          { "name": "COST_BEG", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "ADDITIONS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "ADJUSTMENTS", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "TRANSFERS_NET", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "RETIREMENTS_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_PERIOD", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_YTD", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DEPRN_ITD", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "NBV_END", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "UNITS", "dataType": "Decimal", "summarizeBy": "sum" }
+        ],
+        "partitions": [
+          {
+            "name": "F_Asset_Balance_Period",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [ASSET_ID = Int64.Type, BOOK_TYPE_CODE = type text, PERIOD_COUNTER = Int64.Type, PERIOD_NAME = type text, COST_BEG = type number, ADDITIONS = type number, ADJUSTMENTS = type number, TRANSFERS_NET = type number, RETIREMENTS_COST = type number, DEPRN_PERIOD = type number, DEPRN_YTD = type number, DEPRN_ITD = type number, NBV_END = type number, UNITS = type number], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Project_Cost",
+        "columns": [
+          { "name": "EXPENDITURE_ITEM_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "LINE_NUM", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PROJECT_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "TASK_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "ORG_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PRVDR_GL_DATE", "dataType": "DateTime", "summarizeBy": "none" },
+          { "name": "CAPITALIZABLE_FLAG", "dataType": "String", "summarizeBy": "none" },
+          { "name": "REVERSED_FLAG", "dataType": "String", "summarizeBy": "none" },
+          { "name": "DENOM_CURRENCY_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "DENOM_RAW_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "DENOM_BURDENED_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "ACCT_CURRENCY_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "ACCT_RAW_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "ACCT_BURDENED_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "CODE_COMBINATION_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "AS_OF_DATE", "dataType": "DateTime", "summarizeBy": "none" },
+          { "name": "AGE_DAYS", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "ASSET_LINE_COUNT", "dataType": "Int64", "summarizeBy": "sum" },
+          { "name": "POSTED_ASSET_COUNT", "dataType": "Int64", "summarizeBy": "sum" },
+          { "name": "HAS_CAPITAL_HOLD", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "LIFECYCLE_STATUS", "dataType": "String", "summarizeBy": "none" },
+          { "name": "IS_CAPITALIZATION_CANDIDATE", "dataType": "Int64", "summarizeBy": "none" }
+        ],
+        "measures": [
+          {
+            "name": "Project Cost",
+            "expression": "SUM(F_Project_Cost[ACCT_RAW_COST])",
+            "formatString": "$#,0.00;($#,0.00);$0.00"
+          },
+          {
+            "name": "Oracle-Capitalizable Cost",
+            "expression": "CALCULATE(SUM(F_Project_Cost[ACCT_BURDENED_COST]), F_Project_Cost[CAPITALIZABLE_FLAG] = \"Y\")",
+            "formatString": "$#,0.00;($#,0.00);$0.00"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "F_Project_Cost",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [EXPENDITURE_ITEM_ID = Int64.Type, LINE_NUM = Int64.Type, PROJECT_ID = Int64.Type, TASK_ID = Int64.Type, ORG_ID = Int64.Type, PRVDR_GL_DATE = type date, CAPITALIZABLE_FLAG = type text, REVERSED_FLAG = type text, DENOM_CURRENCY_CODE = type text, DENOM_RAW_COST = type number, DENOM_BURDENED_COST = type number, ACCT_CURRENCY_CODE = type text, ACCT_RAW_COST = type number, ACCT_BURDENED_COST = type number, CODE_COMBINATION_ID = Int64.Type, AS_OF_DATE = type date, AGE_DAYS = Int64.Type, ASSET_LINE_COUNT = Int64.Type, POSTED_ASSET_COUNT = Int64.Type, HAS_CAPITAL_HOLD = Int64.Type, LIFECYCLE_STATUS = type text, IS_CAPITALIZATION_CANDIDATE = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Project_Asset_Line",
+        "columns": [
+          { "name": "PROJECT_ASSET_LINE_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PROJECT_ASSET_LINE_DETAIL_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PROJECT_ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PROJECT_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "TASK_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "ORG_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "LINE_TYPE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "DESCRIPTION", "dataType": "String", "summarizeBy": "none" },
+          { "name": "ORIGINAL_ASSET_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "CURRENT_ASSET_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "CIP_CCID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "TRANSFER_STATUS_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "TRANSFER_REJECTION_REASON", "dataType": "String", "summarizeBy": "none" },
+          { "name": "UNASSIGNED_LINE_FLAG", "dataType": "String", "summarizeBy": "none" },
+          { "name": "REV_PROJ_ASSET_LINE_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "CREATION_DATE", "dataType": "DateTime", "summarizeBy": "none" },
+          { "name": "PROJECT_ASSET_NAME", "dataType": "String", "summarizeBy": "none" },
+          { "name": "BOOK_TYPE_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "DATE_PLACED_IN_SERVICE", "dataType": "DateTime", "summarizeBy": "none" },
+          { "name": "CAPITALIZED_FLAG", "dataType": "String", "summarizeBy": "none" },
+          { "name": "CAPITALIZED_DATE", "dataType": "DateTime", "summarizeBy": "none" },
+          { "name": "CAPITAL_HOLD_FLAG", "dataType": "String", "summarizeBy": "none" },
+          { "name": "FA_ASSET_ID", "dataType": "Int64", "summarizeBy": "none" }
+        ],
+        "measures": [
+          {
+            "name": "Assigned Asset-Line Cost",
+            "expression": "SUM(F_Project_Asset_Line[CURRENT_ASSET_COST])",
+            "formatString": "$#,0.00;($#,0.00);$0.00"
+          },
+          {
+            "name": "Held Amount",
+            "expression": "CALCULATE([Assigned Asset-Line Cost], F_Project_Asset_Line[CAPITAL_HOLD_FLAG] = \"Y\")",
+            "formatString": "$#,0.00;($#,0.00);$0.00"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "F_Project_Asset_Line",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [PROJECT_ASSET_LINE_ID = Int64.Type, PROJECT_ASSET_LINE_DETAIL_ID = Int64.Type, PROJECT_ASSET_ID = Int64.Type, PROJECT_ID = Int64.Type, TASK_ID = Int64.Type, ORG_ID = Int64.Type, LINE_TYPE = type text, DESCRIPTION = type text, ORIGINAL_ASSET_COST = type number, CURRENT_ASSET_COST = type number, CIP_CCID = Int64.Type, TRANSFER_STATUS_CODE = type text, TRANSFER_REJECTION_REASON = type text, UNASSIGNED_LINE_FLAG = type text, REV_PROJ_ASSET_LINE_ID = Int64.Type, CREATION_DATE = type datetime, PROJECT_ASSET_NAME = type text, BOOK_TYPE_CODE = type text, DATE_PLACED_IN_SERVICE = type date, CAPITALIZED_FLAG = type text, CAPITALIZED_DATE = type date, CAPITAL_HOLD_FLAG = type text, FA_ASSET_ID = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "B_Project_Cost_To_Asset_Line",
+        "columns": [
+          { "name": "PROJ_ASSET_LINE_DTL_UNIQ_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PROJECT_ASSET_LINE_DETAIL_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PROJECT_ASSET_LINE_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "EXPENDITURE_ITEM_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "LINE_NUM", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PROJECT_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "TASK_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "DETAIL_REVERSAL_FLAG", "dataType": "String", "summarizeBy": "none" },
+          { "name": "COST_TO_ASSET_LINE_FANOUT", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "ASSET_LINE_TO_COST_FANIN", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "IS_SPLIT_FANOUT", "dataType": "Int64", "summarizeBy": "none" }
+        ],
+        "partitions": [
+          {
+            "name": "B_Project_Cost_To_Asset_Line",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [PROJ_ASSET_LINE_DTL_UNIQ_ID = Int64.Type, PROJECT_ASSET_LINE_DETAIL_ID = Int64.Type, PROJECT_ASSET_LINE_ID = Int64.Type, EXPENDITURE_ITEM_ID = Int64.Type, LINE_NUM = Int64.Type, PROJECT_ID = Int64.Type, TASK_ID = Int64.Type, DETAIL_REVERSAL_FLAG = type text, COST_TO_ASSET_LINE_FANOUT = Int64.Type, ASSET_LINE_TO_COST_FANIN = Int64.Type, IS_SPLIT_FANOUT = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      },
+      {
+        "name": "F_Project_Capitalization_Status",
+        "columns": [
+          { "name": "PROJECT_ASSET_LINE_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "AS_OF_DATE", "dataType": "DateTime", "summarizeBy": "none" },
+          { "name": "PROJECT_ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "PROJECT_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "TASK_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "CURRENT_ASSET_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "TRANSFER_STATUS_CODE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "TRANSFER_REJECTION_REASON", "dataType": "String", "summarizeBy": "none" },
+          { "name": "CAPITALIZABLE_FLAG", "dataType": "String", "summarizeBy": "none" },
+          { "name": "CAPITAL_HOLD_FLAG", "dataType": "String", "summarizeBy": "none" },
+          { "name": "AGE_DAYS", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "MASS_ADDITION_COUNT", "dataType": "Int64", "summarizeBy": "sum" },
+          { "name": "MASS_ADDITION_STATUS_PROFILE", "dataType": "String", "summarizeBy": "none" },
+          { "name": "POSTED_SOURCE_LINE_COUNT", "dataType": "Int64", "summarizeBy": "sum" },
+          { "name": "POSTED_FIXED_ASSETS_COST", "dataType": "Decimal", "summarizeBy": "sum" },
+          { "name": "FA_ASSET_ID", "dataType": "Int64", "summarizeBy": "none" },
+          { "name": "LIFECYCLE_STATUS", "dataType": "String", "summarizeBy": "none" },
+          { "name": "IS_CAPITALIZATION_CANDIDATE", "dataType": "Int64", "summarizeBy": "none" }
+        ],
+        "measures": [
+          {
+            "name": "Posted Capitalized Cost",
+            "expression": "SUM(F_Project_Capitalization_Status[POSTED_FIXED_ASSETS_COST])",
+            "formatString": "$#,0.00;($#,0.00);$0.00"
+          },
+          {
+            "name": "Outstanding Candidate Amount",
+            "expression": "CALCULATE(SUM(F_Project_Capitalization_Status[CURRENT_ASSET_COST]), F_Project_Capitalization_Status[IS_CAPITALIZATION_CANDIDATE] = 1)",
+            "formatString": "$#,0.00;($#,0.00);$0.00"
+          },
+          {
+            "name": "Capitalization Candidate Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(F_Project_Capitalization_Status[PROJECT_ASSET_LINE_ID]), F_Project_Capitalization_Status[IS_CAPITALIZATION_CANDIDATE] = 1)",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Rejected Amount",
+            "expression": "CALCULATE(SUM(F_Project_Capitalization_Status[CURRENT_ASSET_COST]), F_Project_Capitalization_Status[LIFECYCLE_STATUS] = \"TRANSFER_REJECTED\")",
+            "formatString": "$#,0.00;($#,0.00);$0.00"
+          },
+          {
+            "name": "Average Candidate Age Days",
+            "expression": "CALCULATE(AVERAGE(F_Project_Capitalization_Status[AGE_DAYS]), F_Project_Capitalization_Status[IS_CAPITALIZATION_CANDIDATE] = 1)",
+            "formatString": "0.0"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "F_Project_Capitalization_Status",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table(type table [PROJECT_ASSET_LINE_ID = Int64.Type, AS_OF_DATE = type date, PROJECT_ASSET_ID = Int64.Type, PROJECT_ID = Int64.Type, TASK_ID = Int64.Type, CURRENT_ASSET_COST = type number, TRANSFER_STATUS_CODE = type text, TRANSFER_REJECTION_REASON = type text, CAPITALIZABLE_FLAG = type text, CAPITAL_HOLD_FLAG = type text, AGE_DAYS = Int64.Type, MASS_ADDITION_COUNT = Int64.Type, MASS_ADDITION_STATUS_PROFILE = type text, POSTED_SOURCE_LINE_COUNT = Int64.Type, POSTED_FIXED_ASSETS_COST = type number, FA_ASSET_ID = Int64.Type, LIFECYCLE_STATUS = type text, IS_CAPITALIZATION_CANDIDATE = Int64.Type], {}) in Source"
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "F_Asset_Transaction_to_D_COA",
+        "fromTable": "F_Asset_Transaction",
+        "fromColumn": "CODE_COMBINATION_ID",
+        "toTable": "D_COA",
+        "toColumn": "CODE_COMBINATION_ID",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Transaction_to_D_Asset",
+        "fromTable": "F_Asset_Transaction",
+        "fromColumn": "ASSET_ID",
+        "toTable": "D_Asset",
+        "toColumn": "ASSET_ID",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Transaction_to_D_Book",
+        "fromTable": "F_Asset_Transaction",
+        "fromColumn": "BOOK_TYPE_CODE",
+        "toTable": "D_Book",
+        "toColumn": "BOOK_TYPE_CODE",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Depreciation_Period_to_D_Asset",
+        "fromTable": "F_Depreciation_Period",
+        "fromColumn": "ASSET_ID",
+        "toTable": "D_Asset",
+        "toColumn": "ASSET_ID",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Depreciation_Period_to_D_Book",
+        "fromTable": "F_Depreciation_Period",
+        "fromColumn": "BOOK_TYPE_CODE",
+        "toTable": "D_Book",
+        "toColumn": "BOOK_TYPE_CODE",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Depreciation_Period_to_D_Time",
+        "fromTable": "F_Depreciation_Period",
+        "fromColumn": "PERIOD_COUNTER",
+        "toTable": "D_Time",
+        "toColumn": "PERIOD_COUNTER",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Balance_Period_to_D_Asset",
+        "fromTable": "F_Asset_Balance_Period",
+        "fromColumn": "ASSET_ID",
+        "toTable": "D_Asset",
+        "toColumn": "ASSET_ID",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Balance_Period_to_D_Book",
+        "fromTable": "F_Asset_Balance_Period",
+        "fromColumn": "BOOK_TYPE_CODE",
+        "toTable": "D_Book",
+        "toColumn": "BOOK_TYPE_CODE",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Balance_Period_to_D_Time",
+        "fromTable": "F_Asset_Balance_Period",
+        "fromColumn": "PERIOD_COUNTER",
+        "toTable": "D_Time",
+        "toColumn": "PERIOD_COUNTER",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Asset_Transaction_to_D_Time_TRX_DATE",
+        "fromTable": "F_Asset_Transaction",
+        "fromColumn": "TRX_DATE",
+        "toTable": "D_Time",
+        "toColumn": "DATE",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": false
+      },
+      {
+        "name": "F_Project_Cost_to_D_Project",
+        "fromTable": "F_Project_Cost",
+        "fromColumn": "PROJECT_ID",
+        "toTable": "D_Project",
+        "toColumn": "PROJECT_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Cost_to_D_Task",
+        "fromTable": "F_Project_Cost",
+        "fromColumn": "TASK_ID",
+        "toTable": "D_Task",
+        "toColumn": "TASK_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Cost_to_D_COA",
+        "fromTable": "F_Project_Cost",
+        "fromColumn": "CODE_COMBINATION_ID",
+        "toTable": "D_COA",
+        "toColumn": "CODE_COMBINATION_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Cost_to_D_Time",
+        "fromTable": "F_Project_Cost",
+        "fromColumn": "PRVDR_GL_DATE",
+        "toTable": "D_Time",
+        "toColumn": "DATE",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Asset_Line_to_D_Project",
+        "fromTable": "F_Project_Asset_Line",
+        "fromColumn": "PROJECT_ID",
+        "toTable": "D_Project",
+        "toColumn": "PROJECT_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Asset_Line_to_D_Task",
+        "fromTable": "F_Project_Asset_Line",
+        "fromColumn": "TASK_ID",
+        "toTable": "D_Task",
+        "toColumn": "TASK_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Asset_Line_to_D_Time",
+        "fromTable": "F_Project_Asset_Line",
+        "fromColumn": "DATE_PLACED_IN_SERVICE",
+        "toTable": "D_Time",
+        "toColumn": "DATE",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Asset_Line_to_D_COA",
+        "fromTable": "F_Project_Asset_Line",
+        "fromColumn": "CIP_CCID",
+        "toTable": "D_COA",
+        "toColumn": "CODE_COMBINATION_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Asset_Line_to_D_Asset",
+        "fromTable": "F_Project_Asset_Line",
+        "fromColumn": "FA_ASSET_ID",
+        "toTable": "D_Asset",
+        "toColumn": "ASSET_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "B_Project_Cost_To_Asset_Line_to_D_Project",
+        "fromTable": "B_Project_Cost_To_Asset_Line",
+        "fromColumn": "PROJECT_ID",
+        "toTable": "D_Project",
+        "toColumn": "PROJECT_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "B_Project_Cost_To_Asset_Line_to_D_Task",
+        "fromTable": "B_Project_Cost_To_Asset_Line",
+        "fromColumn": "TASK_ID",
+        "toTable": "D_Task",
+        "toColumn": "TASK_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Capitalization_Status_to_D_Project",
+        "fromTable": "F_Project_Capitalization_Status",
+        "fromColumn": "PROJECT_ID",
+        "toTable": "D_Project",
+        "toColumn": "PROJECT_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Capitalization_Status_to_D_Task",
+        "fromTable": "F_Project_Capitalization_Status",
+        "fromColumn": "TASK_ID",
+        "toTable": "D_Task",
+        "toColumn": "TASK_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Capitalization_Status_to_D_Time",
+        "fromTable": "F_Project_Capitalization_Status",
+        "fromColumn": "AS_OF_DATE",
+        "toTable": "D_Time",
+        "toColumn": "DATE",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "F_Project_Capitalization_Status_to_D_Asset",
+        "fromTable": "F_Project_Capitalization_Status",
+        "fromColumn": "FA_ASSET_ID",
+        "toTable": "D_Asset",
+        "toColumn": "ASSET_ID",
+        "crossFilteringBehavior": "oneDirection",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      }
+    ]
+  }
+}
