@@ -1,0 +1,14 @@
+# Kimball Bus Matrix — Template
+
+> Copy this file to `docs/domains/<domain>/bus-matrix.md` and fill in for each P2C domain.
+
+| Business Process | Fact Table / Grain | Dim A | Dim B | Dim C | Dim D | Other Dims | Notes |
+|------------------|--------------------|:-----:|:-----:|:-----:|:-----:|------------|-------|
+| (process)        | (F_* at natural grain) |  yes  |  yes  | key   | opt   | (list)     | (constraints, keys) |
+
+**Guidelines**
+- Facts at **one grain** only. Avoid mixing subledger/SLA/GL in a single table.
+- Use **conformed dimensions** across processes (Time, COA, Org, etc.).
+- When necessary, provide **bridge tables** for ragged/time-varying hierarchies.
+- Document **primary keys** and **surrogate keys** for each fact and dimension.
+- Record **version** (e.g., 26B) to tie to source application release.

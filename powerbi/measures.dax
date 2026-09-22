@@ -1,0 +1,101 @@
+[Depreciation (Period)] := SUM(F_Depreciation_Period[DEPRN_AMOUNT])
+[NBV End]               := SUM(F_Asset_Balance_Period[NBV_END])
+[Cost Additions]        := CALCULATE(SUM(F_Asset_Transaction[COST_DELTA]), F_Asset_Transaction[TRANSACTION_TYPE_CODE]="ADDITION")
+[Transactions Count]    := COUNTROWS(F_Asset_Transaction)
+
+-- AP Aging (schedule grain; use AMOUNT_REMAINING only on F_AP_Aging_Schedule)
+[AP Open Amount] :=
+    SUM(F_AP_Aging_Schedule[AMOUNT_REMAINING])
+
+[AP Gross Unpaid Invoices] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[IS_CREDIT_MEMO] = 0
+    )
+
+[AP Open Credits] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[IS_CREDIT_MEMO] = 1
+    )
+
+[AP Net Exposure] :=
+    [AP Gross Unpaid Invoices] + [AP Open Credits]
+
+[AP Held Amount] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[IS_ON_HOLD] = 1
+    )
+
+[AP Project Related Amount] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[HAS_PROJECT_DISTRIBUTION] = 1
+    )
+
+[AP Past Due Amount] :=
+    CALCULATE(
+        [AP Open Amount],
+        F_AP_Aging_Schedule[IS_PAST_DUE] = 1
+    )
+
+[AP Invoice Count] :=
+    DISTINCTCOUNT(F_AP_Aging_Schedule[INVOICE_ID])
+
+[AP Supplier Count] :=
+    DISTINCTCOUNT(F_AP_Aging_Schedule[VENDOR_ID])
+
+[AP Distribution Line Amount] :=
+    SUM(F_AP_Invoice_Distribution[AMOUNT])
+
+-- Projects Capitalization Lifecycle
+[Project Cost] :=
+    SUM(F_Project_Cost[ACCT_RAW_COST])
+
+[Oracle-Capitalizable Cost] :=
+    CALCULATE(
+        SUM(F_Project_Cost[ACCT_BURDENED_COST]),
+        F_Project_Cost[CAPITALIZABLE_FLAG] = "Y"
+    )
+
+[Assigned Asset-Line Cost] :=
+    SUM(F_Project_Asset_Line[CURRENT_ASSET_COST])
+
+[Posted Capitalized Cost] :=
+    SUM(F_Project_Capitalization_Status[POSTED_FIXED_ASSETS_COST])
+
+[Outstanding Candidate Amount] :=
+    CALCULATE(
+        SUM(F_Project_Capitalization_Status[CURRENT_ASSET_COST]),
+        F_Project_Capitalization_Status[IS_CAPITALIZATION_CANDIDATE] = 1
+    )
+
+[Capitalization Candidate Count] :=
+    CALCULATE(
+        DISTINCTCOUNT(F_Project_Capitalization_Status[PROJECT_ASSET_LINE_ID]),
+        F_Project_Capitalization_Status[IS_CAPITALIZATION_CANDIDATE] = 1
+    )
+
+[Held Amount] :=
+    CALCULATE(
+        [Assigned Asset-Line Cost],
+        F_Project_Asset_Line[CAPITAL_HOLD_FLAG] = "Y"
+    )
+
+[Rejected Amount] :=
+    CALCULATE(
+        SUM(F_Project_Capitalization_Status[CURRENT_ASSET_COST]),
+        F_Project_Capitalization_Status[LIFECYCLE_STATUS] = "TRANSFER_REJECTED"
+    )
+
+[Average Candidate Age Days] :=
+    CALCULATE(
+        AVERAGE(F_Project_Capitalization_Status[AGE_DAYS]),
+        F_Project_Capitalization_Status[IS_CAPITALIZATION_CANDIDATE] = 1
+    )
+
+-- Notes on USERELATIONSHIP:
+-- Use inactive relationship for TRX date filtering:
+-- [Depreciation YTD] := CALCULATE([Depreciation (Period)], USERELATIONSHIP(D_Time[PERIOD_COUNTER], F_Depreciation_Period[PERIOD_COUNTER]))
+-- AP drill-through: USERELATIONSHIP(F_AP_Aging_Schedule[INVOICE_ID], F_AP_Invoice_Distribution[INVOICE_ID])

@@ -1,0 +1,59 @@
+name: project_cost
+grain: project_cost_distribution_line
+primary_key: [EXPENDITURE_ITEM_ID, LINE_NUM]
+foreign_keys:
+  - PROJECT_ID -> D_Project.PROJECT_ID
+  - TASK_ID -> D_Task.TASK_ID
+  - CODE_COMBINATION_ID -> D_COA.CODE_COMBINATION_ID
+refresh:
+  cadence: daily
+  partitioning: by_date(PRVDR_GL_DATE)
+columns:
+  - {name: EXPENDITURE_ITEM_ID, type: NUMBER, required: true}
+  - {name: LINE_NUM, type: NUMBER, required: true}
+  - {name: PROJECT_ID, type: NUMBER, required: true}
+  - {name: TASK_ID, type: NUMBER, required: true}
+  - {name: ORG_ID, type: NUMBER, required: true}
+  - {name: CODE_COMBINATION_ID, type: NUMBER}
+  - {name: PRVDR_GL_DATE, type: DATE}
+  - {name: CAPITALIZABLE_FLAG, type: VARCHAR2(1), required: true}
+  - {name: REVERSED_FLAG, type: VARCHAR2(1)}
+  - {name: DENOM_CURRENCY_CODE, type: VARCHAR2(15)}
+  - {name: DENOM_RAW_COST, type: NUMBER}
+  - {name: DENOM_BURDENED_COST, type: NUMBER}
+  - {name: ACCT_CURRENCY_CODE, type: VARCHAR2(15)}
+  - {name: ACCT_RAW_COST, type: NUMBER}
+  - {name: ACCT_BURDENED_COST, type: NUMBER}
+  - {name: AS_OF_DATE, type: DATE, required: true}
+  - {name: AGE_DAYS, type: NUMBER}
+  - {name: ASSET_LINE_COUNT, type: NUMBER, required: true}
+  - {name: POSTED_ASSET_COUNT, type: NUMBER, required: true}
+  - {name: HAS_CAPITAL_HOLD, type: NUMBER, required: true}
+  - {name: LIFECYCLE_STATUS, type: VARCHAR2(40), required: true}
+  - {name: IS_CAPITALIZATION_CANDIDATE, type: NUMBER, required: true}
+amount_semantics:
+  - DENOM_* amounts are transaction-denominated and additive only within DENOM_CURRENCY_CODE.
+  - ACCT_* amounts are accounting-currency amounts and additive only within ACCT_CURRENCY_CODE.
+  - CODE_COMBINATION_ID classifies ACCT_RAW_COST; burdened-cost account lineage may differ.
+  - Reversing rows remain signed source facts; do not suppress or absolute-value them.
+source_notes:
+  oracle_release: 26B
+  source_path: PJC_COST_DIST_LINES_ALL -> PJC_PRJ_ASSET_LN_DETS -> PJC_PRJ_ASSET_LNS_ALL
+  canonical_keys: PROJECT_ID and TASK_ID are conformed natural keys.
+  coa_mapping: >
+    CODE_COMBINATION_ID is sourced directly from PJC_COST_DIST_LINES_ALL.RAW_COST_DR_CCID.
+    It is the raw-cost debit account only and must not be applied to ACCT_BURDENED_COST.
+  parameters: ["@AS_OF_DATE", "@GRACE_DAYS"]
+  candidate_policy: >
+    Review-only. Requires CAPITALIZABLE_FLAG = Y, elapsed age >= @GRACE_DAYS, no posted
+    FA_ASSET_INVOICES evidence, and neither a project-asset capital hold nor an FA mass-addition
+    ON HOLD status. Generated but unposted lines can remain candidates; ASSET_LINE_COUNT
+    distinguishes them from not-generated costs.
+  unknown_codes: Profile CAPITALIZABLE_FLAG and REVERSED_FLAG; only explicit Y is affirmative.
+validation_notes:
+  - Grain must be unique on EXPENDITURE_ITEM_ID, LINE_NUM.
+  - Cost sums must reconcile to PJC_COST_DIST_LINES_ALL under identical filters and currencies.
+  - Downstream bridge and posting evidence must be preaggregated before joining to this grain.
+  - CAPITALIZABLE_NOT_GENERATED and POLICY_REVIEW_REQUIRED are review states, not accounting conclusions.
+  - Tenant grants, column availability, and delivered flag values require 26B tenant validation.
+version: 26B

@@ -1,0 +1,48 @@
+name: project_asset_line
+grain: project_asset_line
+primary_key: [PROJECT_ASSET_LINE_ID]
+foreign_keys:
+  - PROJECT_ID -> D_Project.PROJECT_ID
+  - TASK_ID -> D_Task.TASK_ID
+  - FA_ASSET_ID -> D_Asset.ASSET_ID
+columns:
+  - {name: PROJECT_ASSET_LINE_ID, type: NUMBER, required: true}
+  - {name: PROJECT_ASSET_LINE_DETAIL_ID, type: NUMBER, required: true}
+  - {name: PROJECT_ASSET_ID, type: NUMBER, required: true}
+  - {name: PROJECT_ID, type: NUMBER, required: true}
+  - {name: TASK_ID, type: NUMBER}
+  - {name: ORG_ID, type: NUMBER, required: true}
+  - {name: LINE_TYPE, type: VARCHAR2(30), required: true}
+  - {name: DESCRIPTION, type: VARCHAR2(255)}
+  - {name: ORIGINAL_ASSET_COST, type: NUMBER}
+  - {name: CURRENT_ASSET_COST, type: NUMBER}
+  - {name: CIP_CCID, type: NUMBER}
+  - {name: TRANSFER_STATUS_CODE, type: VARCHAR2(1), required: true}
+  - {name: TRANSFER_REJECTION_REASON, type: VARCHAR2(30)}
+  - {name: UNASSIGNED_LINE_FLAG, type: VARCHAR2(1)}
+  - {name: REV_PROJ_ASSET_LINE_ID, type: NUMBER}
+  - {name: CREATION_DATE, type: TIMESTAMP, required: true}
+  - {name: PROJECT_ASSET_NAME, type: VARCHAR2(240)}
+  - {name: BOOK_TYPE_CODE, type: VARCHAR2(30)}
+  - {name: DATE_PLACED_IN_SERVICE, type: DATE}
+  - {name: CAPITALIZED_FLAG, type: VARCHAR2(1)}
+  - {name: CAPITALIZED_DATE, type: DATE}
+  - {name: CAPITAL_HOLD_FLAG, type: VARCHAR2(1)}
+  - {name: FA_ASSET_ID, type: NUMBER}
+amount_semantics:
+  - CURRENT_ASSET_COST is additive at asset-line grain but may differ from ORIGINAL_ASSET_COST after splits.
+  - Reversal lines are retained through REV_PROJ_ASSET_LINE_ID; do not net without an explicit policy.
+source_notes:
+  oracle_release: 26B
+  source_path: PJC_PRJ_ASSET_LNS_ALL left joined to PJC_PRJ_ASSETS_ALL on PROJECT_ASSET_ID
+  canonical_keys: PROJECT_ID and TASK_ID are conformed natural keys.
+  assignment_rule: PROJECT_ASSET_ID = 0 represents an Oracle unassigned line.
+  unknown_codes: >
+    TRANSFER_STATUS_CODE is intentionally retained raw. Do not infer success or rejection from
+    undocumented values; profile the tenant before extending lifecycle mappings.
+validation_notes:
+  - Grain must be unique on PROJECT_ASSET_LINE_ID.
+  - PJC_PRJ_ASSETS_ALL must remain a many-to-one enrichment.
+  - CURRENT_ASSET_COST must reconcile to PJC_PRJ_ASSET_LNS_ALL, including split and reversal rows.
+  - Tenant grants and delivered status values require Oracle 26B tenant validation.
+version: 26B

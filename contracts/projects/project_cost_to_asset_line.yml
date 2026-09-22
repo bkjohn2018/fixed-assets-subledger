@@ -1,0 +1,43 @@
+name: project_cost_to_asset_line
+grain: project_asset_line_detail_row_expanded_to_asset_line
+primary_key: [PROJ_ASSET_LINE_DTL_UNIQ_ID, PROJECT_ASSET_LINE_ID]
+foreign_keys:
+  - "[EXPENDITURE_ITEM_ID, LINE_NUM] -> F_Project_Cost.[EXPENDITURE_ITEM_ID, LINE_NUM]"
+  - PROJECT_ASSET_LINE_ID -> F_Project_Asset_Line.PROJECT_ASSET_LINE_ID
+  - PROJECT_ID -> D_Project.PROJECT_ID
+  - TASK_ID -> D_Task.TASK_ID
+columns:
+  - {name: PROJ_ASSET_LINE_DTL_UNIQ_ID, type: NUMBER, required: true}
+  - {name: PROJECT_ASSET_LINE_DETAIL_ID, type: NUMBER, required: true}
+  - {name: PROJECT_ASSET_LINE_ID, type: NUMBER, required: true}
+  - {name: EXPENDITURE_ITEM_ID, type: NUMBER, required: true}
+  - {name: LINE_NUM, type: NUMBER, required: true}
+  - {name: PROJECT_ID, type: NUMBER, required: true}
+  - {name: TASK_ID, type: NUMBER}
+  - {name: DETAIL_REVERSAL_FLAG, type: VARCHAR2(1)}
+  - {name: COST_TO_ASSET_LINE_FANOUT, type: NUMBER, required: true}
+  - {name: ASSET_LINE_TO_COST_FANIN, type: NUMBER, required: true}
+  - {name: IS_SPLIT_FANOUT, type: NUMBER, required: true}
+additivity:
+  classification: non_additive_lineage_bridge
+  rule: >
+    Do not place or sum project-cost or asset-line amount measures on this bridge. When an asset line
+    is split, PROJECT_ASSET_LINE_DETAIL_ID is copied to each split line, so the same cost distribution
+    can fan out to multiple PROJECT_ASSET_LINE_ID values.
+source_notes:
+  oracle_release: 26B
+  source_path: >
+    PJC_PRJ_ASSET_LN_DETS joined to PJC_PRJ_ASSET_LNS_ALL by PROJECT_ASSET_LINE_DETAIL_ID,
+    then to PJC_COST_DIST_LINES_ALL by EXPENDITURE_ITEM_ID and LINE_NUM.
+  stable_key: >
+    PROJ_ASSET_LINE_DTL_UNIQ_ID is the stable Oracle detail-row identifier. It is paired with
+    PROJECT_ASSET_LINE_ID because a split copies PROJECT_ASSET_LINE_DETAIL_ID to multiple asset
+    lines and expands one source detail row to multiple lineage links.
+  canonical_keys: PROJECT_ID and TASK_ID are conformed natural keys sourced from the cost line.
+validation_notes:
+  - Grain must be unique and non-null on PROJ_ASSET_LINE_DTL_UNIQ_ID, PROJECT_ASSET_LINE_ID.
+  - Profile duplicate logical links after split and reversal activity; do not deduplicate them.
+  - COST_TO_ASSET_LINE_FANOUT greater than one is expected for split asset lines.
+  - DETAIL_REVERSAL_FLAG = Y preserves lineage but makes the cost available for regrouping.
+  - Tenant grants and the 26B availability of PROJ_ASSET_LINE_DTL_UNIQ_ID require tenant validation.
+version: 26B

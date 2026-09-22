@@ -1,0 +1,473 @@
+{
+  "name": "CapEx Lifecycle Analytics Model",
+  "tables": [
+    {
+      "name": "D_Project",
+      "columns": [
+        {"name": "PROJECT_ID", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "D_Task",
+      "columns": [
+        {"name": "TASK_ID", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "D_COA",
+      "columns": [
+        {"name": "CODE_COMBINATION_ID", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "D_Asset",
+      "columns": [
+        {"name": "ASSET_ID", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "D_Book",
+      "columns": [
+        {"name": "BOOK_TYPE_CODE", "dataType": "String", "isHidden": false}
+      ]
+    },
+    {
+      "name": "D_Time",
+      "columns": [
+        {"name": "DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "PERIOD_COUNTER", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "D_Supplier",
+      "columns": [
+        {"name": "SUPPLIER_ID", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_Asset_Transaction",
+      "columns": [
+        {"name": "TRANSACTION_HEADER_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "DISTRIBUTION_LINE_NUMBER", "dataType": "Int64", "isHidden": false},
+        {"name": "TRANSACTION_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "TRX_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "ASSET_NUMBER", "dataType": "String", "isHidden": false},
+        {"name": "BOOK_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "CATEGORY_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "COST_DELTA", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_RESERVE_DELTA", "dataType": "Decimal", "isHidden": false},
+        {"name": "PROCEEDS", "dataType": "Decimal", "isHidden": false},
+        {"name": "GAIN_LOSS", "dataType": "Decimal", "isHidden": false},
+        {"name": "UNITS_DELTA", "dataType": "Decimal", "isHidden": false},
+        {"name": "CODE_COMBINATION_ID", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_Depreciation_Period",
+      "columns": [
+        {"name": "ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "BOOK_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "PERIOD_COUNTER", "dataType": "Int64", "isHidden": false},
+        {"name": "PERIOD_NAME", "dataType": "String", "isHidden": false},
+        {"name": "DEPRN_AMOUNT", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_BONUS", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_CATCHUP", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_YTD", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_ITD", "dataType": "Decimal", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_Asset_Balance_Period",
+      "columns": [
+        {"name": "ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "BOOK_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "PERIOD_COUNTER", "dataType": "Int64", "isHidden": false},
+        {"name": "PERIOD_NAME", "dataType": "String", "isHidden": false},
+        {"name": "COST_BEG", "dataType": "Decimal", "isHidden": false},
+        {"name": "ADDITIONS", "dataType": "Decimal", "isHidden": false},
+        {"name": "ADJUSTMENTS", "dataType": "Decimal", "isHidden": false},
+        {"name": "TRANSFERS_NET", "dataType": "Decimal", "isHidden": false},
+        {"name": "RETIREMENTS_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_PERIOD", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_YTD", "dataType": "Decimal", "isHidden": false},
+        {"name": "DEPRN_ITD", "dataType": "Decimal", "isHidden": false},
+        {"name": "NBV_END", "dataType": "Decimal", "isHidden": false},
+        {"name": "UNITS", "dataType": "Decimal", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_AP_Aging_Schedule",
+      "columns": [
+        {"name": "AS_OF_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "SCHEDULE_KEY", "dataType": "String", "isHidden": false},
+        {"name": "INVOICE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PAYMENT_NUM", "dataType": "Int64", "isHidden": false},
+        {"name": "ORG_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "VENDOR_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "VENDOR_SITE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "INVOICE_NUM", "dataType": "String", "isHidden": false},
+        {"name": "INVOICE_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "DUE_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "INVOICE_TYPE_LOOKUP_CODE", "dataType": "String", "isHidden": false},
+        {"name": "AMOUNT_REMAINING", "dataType": "Decimal", "isHidden": false},
+        {"name": "OPEN_AMOUNT", "dataType": "Decimal", "isHidden": false},
+        {"name": "DAYS_PAST_DUE", "dataType": "Int64", "isHidden": false},
+        {"name": "AGING_BUCKET", "dataType": "String", "isHidden": false},
+        {"name": "HOLD_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "IBY_HOLD_REASON", "dataType": "String", "isHidden": false},
+        {"name": "IS_CREDIT_MEMO", "dataType": "Int64", "isHidden": false},
+        {"name": "IS_ON_HOLD", "dataType": "Int64", "isHidden": false},
+        {"name": "HAS_PROJECT_DISTRIBUTION", "dataType": "Int64", "isHidden": false},
+        {"name": "HAS_PO_MATCHED_DISTRIBUTION", "dataType": "Int64", "isHidden": false},
+        {"name": "DISTRIBUTION_TOTAL_AMOUNT", "dataType": "Decimal", "isHidden": true}
+      ]
+    },
+    {
+      "name": "F_AP_Invoice_Distribution",
+      "columns": [
+        {"name": "AS_OF_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "INVOICE_DISTRIBUTION_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "INVOICE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "AMOUNT", "dataType": "Decimal", "isHidden": false},
+        {"name": "DIST_CODE_COMBINATION_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PJC_PROJECT_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "IS_PROJECT_RELATED", "dataType": "Int64", "isHidden": false},
+        {"name": "IS_PO_MATCHED", "dataType": "Int64", "isHidden": false},
+        {"name": "VENDOR_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "INVOICE_NUM", "dataType": "String", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_Project_Cost",
+      "columns": [
+        {"name": "EXPENDITURE_ITEM_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "LINE_NUM", "dataType": "Int64", "isHidden": false},
+        {"name": "PROJECT_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "TASK_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "ORG_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PRVDR_GL_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "CAPITALIZABLE_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "REVERSED_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "DENOM_CURRENCY_CODE", "dataType": "String", "isHidden": false},
+        {"name": "DENOM_RAW_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "DENOM_BURDENED_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "ACCT_CURRENCY_CODE", "dataType": "String", "isHidden": false},
+        {"name": "ACCT_RAW_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "ACCT_BURDENED_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "CODE_COMBINATION_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "AS_OF_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "AGE_DAYS", "dataType": "Int64", "isHidden": false},
+        {"name": "ASSET_LINE_COUNT", "dataType": "Int64", "isHidden": false},
+        {"name": "POSTED_ASSET_COUNT", "dataType": "Int64", "isHidden": false},
+        {"name": "HAS_CAPITAL_HOLD", "dataType": "Int64", "isHidden": false},
+        {"name": "LIFECYCLE_STATUS", "dataType": "String", "isHidden": false},
+        {"name": "IS_CAPITALIZATION_CANDIDATE", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_Project_Asset_Line",
+      "columns": [
+        {"name": "PROJECT_ASSET_LINE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PROJECT_ASSET_LINE_DETAIL_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PROJECT_ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PROJECT_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "TASK_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "ORG_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "LINE_TYPE", "dataType": "String", "isHidden": false},
+        {"name": "DESCRIPTION", "dataType": "String", "isHidden": false},
+        {"name": "ORIGINAL_ASSET_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "CURRENT_ASSET_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "CIP_CCID", "dataType": "Int64", "isHidden": false},
+        {"name": "TRANSFER_STATUS_CODE", "dataType": "String", "isHidden": false},
+        {"name": "TRANSFER_REJECTION_REASON", "dataType": "String", "isHidden": false},
+        {"name": "UNASSIGNED_LINE_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "REV_PROJ_ASSET_LINE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "CREATION_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "PROJECT_ASSET_NAME", "dataType": "String", "isHidden": false},
+        {"name": "BOOK_TYPE_CODE", "dataType": "String", "isHidden": false},
+        {"name": "DATE_PLACED_IN_SERVICE", "dataType": "DateTime", "isHidden": false},
+        {"name": "CAPITALIZED_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "CAPITALIZED_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "CAPITAL_HOLD_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "FA_ASSET_ID", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "B_Project_Cost_To_Asset_Line",
+      "columns": [
+        {"name": "PROJ_ASSET_LINE_DTL_UNIQ_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PROJECT_ASSET_LINE_DETAIL_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PROJECT_ASSET_LINE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "EXPENDITURE_ITEM_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "LINE_NUM", "dataType": "Int64", "isHidden": false},
+        {"name": "PROJECT_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "TASK_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "DETAIL_REVERSAL_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "COST_TO_ASSET_LINE_FANOUT", "dataType": "Int64", "isHidden": false},
+        {"name": "ASSET_LINE_TO_COST_FANIN", "dataType": "Int64", "isHidden": false},
+        {"name": "IS_SPLIT_FANOUT", "dataType": "Int64", "isHidden": false}
+      ]
+    },
+    {
+      "name": "F_Project_Capitalization_Status",
+      "columns": [
+        {"name": "PROJECT_ASSET_LINE_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "AS_OF_DATE", "dataType": "DateTime", "isHidden": false},
+        {"name": "PROJECT_ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "PROJECT_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "TASK_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "CURRENT_ASSET_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "TRANSFER_STATUS_CODE", "dataType": "String", "isHidden": false},
+        {"name": "TRANSFER_REJECTION_REASON", "dataType": "String", "isHidden": false},
+        {"name": "CAPITALIZABLE_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "CAPITAL_HOLD_FLAG", "dataType": "String", "isHidden": false},
+        {"name": "AGE_DAYS", "dataType": "Int64", "isHidden": false},
+        {"name": "MASS_ADDITION_COUNT", "dataType": "Int64", "isHidden": false},
+        {"name": "MASS_ADDITION_STATUS_PROFILE", "dataType": "String", "isHidden": false},
+        {"name": "POSTED_SOURCE_LINE_COUNT", "dataType": "Int64", "isHidden": false},
+        {"name": "POSTED_FIXED_ASSETS_COST", "dataType": "Decimal", "isHidden": false},
+        {"name": "FA_ASSET_ID", "dataType": "Int64", "isHidden": false},
+        {"name": "LIFECYCLE_STATUS", "dataType": "String", "isHidden": false},
+        {"name": "IS_CAPITALIZATION_CANDIDATE", "dataType": "Int64", "isHidden": false}
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "F_Asset_Transaction_to_D_COA",
+      "fromTable": "F_Asset_Transaction",
+      "fromColumn": "CODE_COMBINATION_ID",
+      "toTable": "D_COA",
+      "toColumn": "CODE_COMBINATION_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Transaction_to_D_Asset",
+      "fromTable": "F_Asset_Transaction",
+      "fromColumn": "ASSET_ID",
+      "toTable": "D_Asset",
+      "toColumn": "ASSET_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Transaction_to_D_Book",
+      "fromTable": "F_Asset_Transaction",
+      "fromColumn": "BOOK_TYPE_CODE",
+      "toTable": "D_Book",
+      "toColumn": "BOOK_TYPE_CODE",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Depreciation_Period_to_D_Asset",
+      "fromTable": "F_Depreciation_Period",
+      "fromColumn": "ASSET_ID",
+      "toTable": "D_Asset",
+      "toColumn": "ASSET_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Depreciation_Period_to_D_Book",
+      "fromTable": "F_Depreciation_Period",
+      "fromColumn": "BOOK_TYPE_CODE",
+      "toTable": "D_Book",
+      "toColumn": "BOOK_TYPE_CODE",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Depreciation_Period_to_D_Time",
+      "fromTable": "F_Depreciation_Period",
+      "fromColumn": "PERIOD_COUNTER",
+      "toTable": "D_Time",
+      "toColumn": "PERIOD_COUNTER",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Balance_Period_to_D_Asset",
+      "fromTable": "F_Asset_Balance_Period",
+      "fromColumn": "ASSET_ID",
+      "toTable": "D_Asset",
+      "toColumn": "ASSET_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Balance_Period_to_D_Book",
+      "fromTable": "F_Asset_Balance_Period",
+      "fromColumn": "BOOK_TYPE_CODE",
+      "toTable": "D_Book",
+      "toColumn": "BOOK_TYPE_CODE",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Balance_Period_to_D_Time",
+      "fromTable": "F_Asset_Balance_Period",
+      "fromColumn": "PERIOD_COUNTER",
+      "toTable": "D_Time",
+      "toColumn": "PERIOD_COUNTER",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_Asset_Transaction_to_D_Time_TRX_DATE",
+      "fromTable": "F_Asset_Transaction",
+      "fromColumn": "TRX_DATE",
+      "toTable": "D_Time",
+      "toColumn": "DATE",
+      "crossFilteringBehavior": "bothDirections",
+      "isActive": false
+    },
+    {
+      "name": "F_AP_Aging_Schedule_to_D_Time_DUE_DATE",
+      "fromTable": "F_AP_Aging_Schedule",
+      "fromColumn": "DUE_DATE",
+      "toTable": "D_Time",
+      "toColumn": "DATE",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_AP_Aging_Schedule_to_D_Supplier",
+      "fromTable": "F_AP_Aging_Schedule",
+      "fromColumn": "VENDOR_ID",
+      "toTable": "D_Supplier",
+      "toColumn": "SUPPLIER_ID",
+      "crossFilteringBehavior": "bothDirections"
+    },
+    {
+      "name": "F_AP_Invoice_Distribution_to_F_AP_Aging_Schedule",
+      "fromTable": "F_AP_Invoice_Distribution",
+      "fromColumn": "INVOICE_ID",
+      "toTable": "F_AP_Aging_Schedule",
+      "toColumn": "INVOICE_ID",
+      "crossFilteringBehavior": "bothDirections",
+      "isActive": false
+    },
+    {
+      "name": "F_AP_Invoice_Distribution_to_D_COA",
+      "fromTable": "F_AP_Invoice_Distribution",
+      "fromColumn": "DIST_CODE_COMBINATION_ID",
+      "toTable": "D_COA",
+      "toColumn": "CODE_COMBINATION_ID",
+      "crossFilteringBehavior": "bothDirections",
+      "isActive": false
+    },
+    {
+      "name": "F_Project_Cost_to_D_Project",
+      "fromTable": "F_Project_Cost",
+      "fromColumn": "PROJECT_ID",
+      "toTable": "D_Project",
+      "toColumn": "PROJECT_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Cost_to_D_Task",
+      "fromTable": "F_Project_Cost",
+      "fromColumn": "TASK_ID",
+      "toTable": "D_Task",
+      "toColumn": "TASK_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Cost_to_D_COA",
+      "fromTable": "F_Project_Cost",
+      "fromColumn": "CODE_COMBINATION_ID",
+      "toTable": "D_COA",
+      "toColumn": "CODE_COMBINATION_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Cost_to_D_Time",
+      "fromTable": "F_Project_Cost",
+      "fromColumn": "PRVDR_GL_DATE",
+      "toTable": "D_Time",
+      "toColumn": "DATE",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Asset_Line_to_D_Project",
+      "fromTable": "F_Project_Asset_Line",
+      "fromColumn": "PROJECT_ID",
+      "toTable": "D_Project",
+      "toColumn": "PROJECT_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Asset_Line_to_D_Task",
+      "fromTable": "F_Project_Asset_Line",
+      "fromColumn": "TASK_ID",
+      "toTable": "D_Task",
+      "toColumn": "TASK_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Asset_Line_to_D_Time",
+      "fromTable": "F_Project_Asset_Line",
+      "fromColumn": "DATE_PLACED_IN_SERVICE",
+      "toTable": "D_Time",
+      "toColumn": "DATE",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Asset_Line_to_D_COA",
+      "fromTable": "F_Project_Asset_Line",
+      "fromColumn": "CIP_CCID",
+      "toTable": "D_COA",
+      "toColumn": "CODE_COMBINATION_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Asset_Line_to_D_Asset",
+      "fromTable": "F_Project_Asset_Line",
+      "fromColumn": "FA_ASSET_ID",
+      "toTable": "D_Asset",
+      "toColumn": "ASSET_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "B_Project_Cost_To_Asset_Line_to_D_Project",
+      "fromTable": "B_Project_Cost_To_Asset_Line",
+      "fromColumn": "PROJECT_ID",
+      "toTable": "D_Project",
+      "toColumn": "PROJECT_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "B_Project_Cost_To_Asset_Line_to_D_Task",
+      "fromTable": "B_Project_Cost_To_Asset_Line",
+      "fromColumn": "TASK_ID",
+      "toTable": "D_Task",
+      "toColumn": "TASK_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Capitalization_Status_to_D_Project",
+      "fromTable": "F_Project_Capitalization_Status",
+      "fromColumn": "PROJECT_ID",
+      "toTable": "D_Project",
+      "toColumn": "PROJECT_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Capitalization_Status_to_D_Task",
+      "fromTable": "F_Project_Capitalization_Status",
+      "fromColumn": "TASK_ID",
+      "toTable": "D_Task",
+      "toColumn": "TASK_ID",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Capitalization_Status_to_D_Time",
+      "fromTable": "F_Project_Capitalization_Status",
+      "fromColumn": "AS_OF_DATE",
+      "toTable": "D_Time",
+      "toColumn": "DATE",
+      "crossFilteringBehavior": "oneDirection"
+    },
+    {
+      "name": "F_Project_Capitalization_Status_to_D_Asset",
+      "fromTable": "F_Project_Capitalization_Status",
+      "fromColumn": "FA_ASSET_ID",
+      "toTable": "D_Asset",
+      "toColumn": "ASSET_ID",
+      "crossFilteringBehavior": "oneDirection"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+name: project_capitalization_status
+grain: project_asset_line_as_of
+primary_key: [PROJECT_ASSET_LINE_ID, AS_OF_DATE]
+foreign_keys:
+  - PROJECT_ID -> D_Project.PROJECT_ID
+  - TASK_ID -> D_Task.TASK_ID
+  - FA_ASSET_ID -> D_Asset.ASSET_ID
+columns:
+  - {name: PROJECT_ASSET_LINE_ID, type: NUMBER, required: true}
+  - {name: AS_OF_DATE, type: DATE, required: true}
+  - {name: PROJECT_ASSET_ID, type: NUMBER, required: true}
+  - {name: PROJECT_ID, type: NUMBER, required: true}
+  - {name: TASK_ID, type: NUMBER}
+  - {name: CURRENT_ASSET_COST, type: NUMBER}
+  - {name: TRANSFER_STATUS_CODE, type: VARCHAR2(1), required: true}
+  - {name: TRANSFER_REJECTION_REASON, type: VARCHAR2(30)}
+  - {name: CAPITALIZABLE_FLAG, type: VARCHAR2(1), required: true}
+  - {name: CAPITAL_HOLD_FLAG, type: VARCHAR2(1)}
+  - {name: AGE_DAYS, type: NUMBER}
+  - {name: MASS_ADDITION_COUNT, type: NUMBER, required: true}
+  - {name: MASS_ADDITION_STATUS_PROFILE, type: VARCHAR2(4000)}
+  - {name: POSTED_SOURCE_LINE_COUNT, type: NUMBER, required: true}
+  - {name: POSTED_FIXED_ASSETS_COST, type: NUMBER, required: true}
+  - {name: FA_ASSET_ID, type: NUMBER}
+  - {name: LIFECYCLE_STATUS, type: VARCHAR2(40), required: true}
+  - {name: IS_CAPITALIZATION_CANDIDATE, type: NUMBER, required: true}
+amount_semantics:
+  - CURRENT_ASSET_COST is the Projects asset-line amount.
+  - POSTED_FIXED_ASSETS_COST is preaggregated FA_ASSET_INVOICES evidence at project asset-line grain.
+  - Compare the two amounts as reconciliation evidence; do not assume equality for adjustments or splits.
+lifecycle_values:
+  - POSTED_CAPITALIZED
+  - TRANSFERRED_NOT_POSTED
+  - TRANSFER_REJECTED
+  - GENERATED_UNASSIGNED
+  - CAPITALIZABLE_NOT_GENERATED
+  - HELD
+  - POLICY_REVIEW_REQUIRED
+source_notes:
+  oracle_release: 26B
+  source_path: >
+    PJC_PRJ_ASSET_LNS_ALL -> PJC_PRJ_ASSETS_ALL -> preaggregated FA_MASS_ADDITIONS and
+    preaggregated FA_ASSET_INVOICES by PROJECT_ASSET_LINE_ID.
+  parameters: ["@AS_OF_DATE", "@GRACE_DAYS"]
+  canonical_keys: PROJECT_ID and TASK_ID are conformed natural keys.
+  status_precedence: >
+    Posted evidence, hold, transfer rejection, transferred mass-addition evidence, unassigned,
+    policy review, then conservative fallback. CAPITALIZABLE_NOT_GENERATED is produced at cost
+    grain because a row without an asset line cannot exist in this snapshot.
+  candidate_policy: >
+    Review-only. Requires Oracle CAPITALIZABLE_FLAG = Y, elapsed age >= @GRACE_DAYS, no posted
+    evidence, and neither a Projects capital hold nor an FA mass-addition ON HOLD status.
+    It never asserts an accounting error or mandatory capitalization.
+  unknown_codes: >
+    FA_MASS_ADDITIONS.POSTING_STATUS and Projects TRANSFER_STATUS_CODE are profiled raw.
+    Unknown codes do not imply success; only FA_ASSET_INVOICES is posted evidence.
+validation_notes:
+  - Grain must be unique on PROJECT_ASSET_LINE_ID, AS_OF_DATE.
+  - Downstream sources must be aggregated before joining to prevent line multiplication.
+  - POSTED_FIXED_ASSETS_COST must reconcile to FA_ASSET_INVOICES under the same project-line filter.
+  - Lifecycle output must be limited to the governed lifecycle_values list.
+  - Tenant grants, status codes, and exact posting timing require Oracle 26B tenant validation.
+version: 26B

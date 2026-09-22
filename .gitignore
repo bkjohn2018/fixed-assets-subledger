@@ -1,3 +1,32 @@
-.codexgit/
+# data & caches
+data/
+*.csv
+*.parquet
+*.pbix
+*.xlsx
+*.xls
+*.zip
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+# node/yarn
+node_modules/
+# OS
+.DS_Store
+Thumbs.db
+.vscode/
 .vs/
+# workspace (outside repo scope)
 cursor-agent-skills/
+.codexgit/
+
+# Non-repo application scaffolding
+backend/
+
+# Power BI Project local artifacts (see powerbi/*.pbip)
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
