@@ -1,4 +1,4 @@
-# Fixed Assets — Kimball Bus Matrix (Oracle Fusion 26B)
+# Fixed Assets — Kimball Bus Matrix (Oracle Fusion 26D)
 
 This matrix documents the **business processes (facts)** and their **conformed dimensions**. Facts must remain at their **natural grain**; do not blend subledger/SLA/GL into a single table.
 
@@ -10,7 +10,7 @@ This matrix documents the **business processes (facts)** and their **conformed d
 
 ## Notes
 - **Conformed dimensions:** `D_Asset`, `D_Book`, `D_Time`, `D_COA (by CODE_COMBINATION_ID)`, `D_Category`, `D_Location`.
-- **Grain guardrails:** Transactions = distribution-line grain; Depreciation = aggregated period grain; Balances = aggregated period snapshot. Oracle 26B documents the OTBI subject areas as extract-backed distribution-grain sources, so aggregate only where the contract explicitly says period grain.
+- **Grain guardrails:** Transactions = distribution-line grain; Depreciation = aggregated period grain; Balances = aggregated period snapshot. Oracle 26D documents the OTBI subject areas as extract-backed distribution-grain sources, so aggregate only where the contract explicitly says period grain.
 - **Reconciliation:** Perform subledger rollforwards at the period grain; any SLA/GL reconciliation should use **separate** facts and mapping tables, not blended rows.
 
 ## Related P2C domains
@@ -19,4 +19,4 @@ AP (Pay stage) is documented in [`../ap/bus-matrix.md`](../ap/bus-matrix.md), an
 
 Cross-stage links (e.g. AP distributions → FA additions) use bridge keys and conformed dimensions; do not grain-blend facts.
 
-**Version:** 26B
+**Version:** 26D

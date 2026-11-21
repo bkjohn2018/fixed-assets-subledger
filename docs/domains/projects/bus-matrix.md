@@ -1,4 +1,4 @@
-# Projects — Kimball Bus Matrix (Oracle Fusion 26B)
+# Projects — Kimball Bus Matrix (Oracle Fusion 26D)
 
 Projects is the active **Collect** stage of Procure-to-Capitalize. The model preserves Oracle source grains while tracing a project cost distribution through project asset assignment and transfer to a posted Fixed Assets asset.
 
@@ -46,4 +46,4 @@ Delivered Oracle status values and object access must be profiled in each tenant
 
 Use drill-through or explicit bridge filtering; do not create active fact-to-fact relationships.
 
-**Version:** 26B
+**Version:** 26D

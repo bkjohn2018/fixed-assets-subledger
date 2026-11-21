@@ -25,7 +25,8 @@ additivity:
     is split, PROJECT_ASSET_LINE_DETAIL_ID is copied to each split line, so the same cost distribution
     can fan out to multiple PROJECT_ASSET_LINE_ID values.
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
+  source_reference: https://docs.oracle.com/en/cloud/saas/project-management/26d/oedpp/pjcprjassetlndets-24936.html
   source_path: >
     PJC_PRJ_ASSET_LN_DETS joined to PJC_PRJ_ASSET_LNS_ALL by PROJECT_ASSET_LINE_DETAIL_ID,
     then to PJC_COST_DIST_LINES_ALL by EXPENDITURE_ITEM_ID and LINE_NUM.
@@ -39,5 +40,5 @@ validation_notes:
   - Profile duplicate logical links after split and reversal activity; do not deduplicate them.
   - COST_TO_ASSET_LINE_FANOUT greater than one is expected for split asset lines.
   - DETAIL_REVERSAL_FLAG = Y preserves lineage but makes the cost available for regrouping.
-  - Tenant grants and the 26B availability of PROJ_ASSET_LINE_DTL_UNIQ_ID require tenant validation.
-version: 26B
+  - Confirm BI Publisher can read the documented PROJ_ASSET_LINE_DTL_UNIQ_ID column in the target tenant.
+version: 26D

@@ -19,4 +19,4 @@ Dimensions may ship as **stub tables** in the Power BI model until a shared dime
 
 Projects uses `PROJECT_ID` and `TASK_ID` as canonical conformed natural keys. Its cost-to-asset-line bridge carries lineage only; conformed dimensions filter the owning facts instead of turning the bridge into an additive fact. Candidate-review attributes belong to the as-of status fact and do not change dimension meaning or establish an accounting conclusion.
 
-**Version:** 26B
+**Version:** 26D

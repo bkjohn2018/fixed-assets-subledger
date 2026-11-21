@@ -37,11 +37,12 @@ lifecycle_values:
   - HELD
   - POLICY_REVIEW_REQUIRED
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   source_path: >
     PJC_PRJ_ASSET_LNS_ALL -> PJC_PRJ_ASSETS_ALL -> preaggregated FA_MASS_ADDITIONS and
     preaggregated FA_ASSET_INVOICES by PROJECT_ASSET_LINE_ID.
   parameters: ["@AS_OF_DATE", "@GRACE_DAYS"]
+  snapshot_timing: AS_OF_DATE determines age. Holds, transfer status, and posting evidence reflect source state at extract time.
   canonical_keys: PROJECT_ID and TASK_ID are conformed natural keys.
   status_precedence: >
     Posted evidence, hold, transfer rejection, transferred mass-addition evidence, unassigned,
@@ -59,5 +60,5 @@ validation_notes:
   - Downstream sources must be aggregated before joining to prevent line multiplication.
   - POSTED_FIXED_ASSETS_COST must reconcile to FA_ASSET_INVOICES under the same project-line filter.
   - Lifecycle output must be limited to the governed lifecycle_values list.
-  - Tenant grants, status codes, and exact posting timing require Oracle 26B tenant validation.
-version: 26B
+  - Tenant grants, status codes, and exact posting timing require Oracle 26D tenant validation.
+version: 26D

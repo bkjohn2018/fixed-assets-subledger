@@ -37,7 +37,7 @@ amount_semantics:
   - CODE_COMBINATION_ID classifies ACCT_RAW_COST; burdened-cost account lineage may differ.
   - Reversing rows remain signed source facts; do not suppress or absolute-value them.
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   source_path: PJC_COST_DIST_LINES_ALL -> PJC_PRJ_ASSET_LN_DETS -> PJC_PRJ_ASSET_LNS_ALL
   canonical_keys: PROJECT_ID and TASK_ID are conformed natural keys.
   coa_mapping: >
@@ -55,5 +55,5 @@ validation_notes:
   - Cost sums must reconcile to PJC_COST_DIST_LINES_ALL under identical filters and currencies.
   - Downstream bridge and posting evidence must be preaggregated before joining to this grain.
   - CAPITALIZABLE_NOT_GENERATED and POLICY_REVIEW_REQUIRED are review states, not accounting conclusions.
-  - Tenant grants, column availability, and delivered flag values require 26B tenant validation.
-version: 26B
+  - Tenant grants, column availability, and delivered flag values require 26D tenant validation.
+version: 26D

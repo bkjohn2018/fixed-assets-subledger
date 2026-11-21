@@ -32,4 +32,4 @@ Conventions aligned with Steve Hoberman dimensional modeling practice and this r
 
 Follow contract naming: `{contract_base}_{yyyymm}.csv` or `{contract_base}_{yyyymmdd}.csv` as documented per domain.
 
-**Version:** 26B
+**Version:** 26D

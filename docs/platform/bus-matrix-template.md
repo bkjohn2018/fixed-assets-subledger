@@ -11,4 +11,4 @@
 - Use **conformed dimensions** across processes (Time, COA, Org, etc.).
 - When necessary, provide **bridge tables** for ragged/time-varying hierarchies.
 - Document **primary keys** and **surrogate keys** for each fact and dimension.
-- Record **version** (e.g., 26B) to tie to source application release.
+- Record **version** (e.g., 26D) to tie to source application release.

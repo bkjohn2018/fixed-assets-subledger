@@ -1,5 +1,5 @@
 -- Staging: AP invoice headers (one row per INVOICE_ID)
--- Source: AP_INVOICES_ALL (Oracle Fusion 26B)
+-- Source: AP_INVOICES_ALL (Oracle Fusion 26D)
 
 WITH invoices AS (
     SELECT

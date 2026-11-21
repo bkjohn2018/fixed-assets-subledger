@@ -28,4 +28,4 @@ Before merging a new P2C stage:
 4. Add BIP and layered SQL
 5. Extend `scripts/check_docs.py` required docs if the domain is active
 
-**Version:** 26B
+**Version:** 26D

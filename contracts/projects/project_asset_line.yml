@@ -33,7 +33,8 @@ amount_semantics:
   - CURRENT_ASSET_COST is additive at asset-line grain but may differ from ORIGINAL_ASSET_COST after splits.
   - Reversal lines are retained through REV_PROJ_ASSET_LINE_ID; do not net without an explicit policy.
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
+  source_reference: https://docs.oracle.com/en/cloud/saas/project-management/26d/oedpp/pjcprjassetlnsall-24938.html
   source_path: PJC_PRJ_ASSET_LNS_ALL left joined to PJC_PRJ_ASSETS_ALL on PROJECT_ASSET_ID
   canonical_keys: PROJECT_ID and TASK_ID are conformed natural keys.
   assignment_rule: PROJECT_ASSET_ID = 0 represents an Oracle unassigned line.
@@ -44,5 +45,5 @@ validation_notes:
   - Grain must be unique on PROJECT_ASSET_LINE_ID.
   - PJC_PRJ_ASSETS_ALL must remain a many-to-one enrichment.
   - CURRENT_ASSET_COST must reconcile to PJC_PRJ_ASSET_LNS_ALL, including split and reversal rows.
-  - Tenant grants and delivered status values require Oracle 26B tenant validation.
-version: 26B
+  - Tenant grants and delivered status values require Oracle 26D tenant validation.
+version: 26D

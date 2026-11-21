@@ -17,7 +17,7 @@ columns:
   - {name: INVOICE_DISTRIBUTION_ID, type: NUMBER, required: true}
   - {name: AE_HEADER_ID, type: NUMBER, required: true}
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   source_path: SLA linkage from AP invoice distributions
   rationale: Use SLA tables to scope to accounted AP activity while preserving AP distribution amount at distribution grain.
   join_logic:
@@ -53,4 +53,4 @@ source_notes:
 validation_notes:
   - If duplicates appear for the same INVOICE_DISTRIBUTION_ID and AE_HEADER_ID, include XLA_AE_LINES and filter to the liability or charge accounting class per reporting policy.
   - For summarized spend history, aggregate DISTRIBUTION_AMOUNT by SUPPLIER_ID and period after extraction.
-version: 26B
+version: 26D

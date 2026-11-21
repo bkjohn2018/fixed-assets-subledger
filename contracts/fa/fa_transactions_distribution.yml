@@ -24,8 +24,9 @@ columns:
   - {name: UNITS_DELTA, type: NUMBER}
   - {name: CODE_COMBINATION_ID, type: NUMBER}
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
+  source_reference: https://docs.oracle.com/en/cloud/saas/financials/26d/faofb/Fixed-Assets-Asset-Transactions-Real-Time-SA-182.html
   otbi_subject_area: Fixed Assets - Asset Transactions Real Time
   documented_grain: asset transaction distribution line (FA_TRX_EXTRACT)
   prerequisite: Run the Extract Assets Reporting Data ESS job before exporting OTBI data.
-version: 26B
+version: 26D

@@ -54,4 +54,4 @@ See [`../platform/change-discipline.md`](../platform/change-discipline.md) for t
 - Application backends, deployment configs, local exports, secrets
 - Lease accounting (future domain if adopted)
 
-**Version:** 26B
+**Version:** 26D

@@ -1,4 +1,4 @@
-# Accounts Payable — Kimball Bus Matrix (Oracle Fusion 26B)
+# Accounts Payable — Kimball Bus Matrix (Oracle Fusion 26D)
 
 This matrix documents AP business processes and conformed dimensions. Facts remain at their **natural grain**. Do not join payment schedules to invoice distributions and sum schedule open amounts.
 
@@ -33,4 +33,4 @@ This matrix documents AP business processes and conformed dimensions. Facts rema
 | Credit memo diagnostics | `F_AP_Aging_Schedule` + diagnostics SQL | `[AP Open Credits]`, `IS_CREDIT_MEMO` = 1 |
 | Project-related aging | `F_AP_Aging_Schedule` | `[AP Project Related Amount]`, `HAS_PROJECT_DISTRIBUTION` |
 
-**Version:** 26B
+**Version:** 26D

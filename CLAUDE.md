@@ -14,7 +14,7 @@ Domain process: Procure-to-Capitalize (P2C) — Procure → Pay → Collect → 
 
 Procurement (Procure stage) is planned but not yet implemented.
 
-Source baseline: **Oracle Fusion Financials 26B**.
+Source documentation baseline is **Oracle Fusion Financials and Project Management 26D**. See [source review](docs/platform/oracle-26d-source-review.md).
 
 ## Commands
 

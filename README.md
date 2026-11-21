@@ -9,7 +9,7 @@ This repository stores source-controlled analytics artifacts only: Oracle OTBI/B
 
 Platform conceptual model: [`docs/conceptual/capex-lifecycle.md`](docs/conceptual/capex-lifecycle.md)
 
-[Oracle Financials 26B Tables and Views](https://docs.oracle.com/en/cloud/saas/financials/26b/oedmf/index.html)
+[Oracle Fusion 26D source baseline and impact review](docs/platform/oracle-26d-source-review.md)
 
 ## Domain registry
 
@@ -162,12 +162,13 @@ The checked-in Power BI files are source artifacts, not packaged report files.
 
 ## Release discipline
 
-Current source baseline: Oracle Fusion Financials 26B.
+Current source documentation baseline is Oracle Fusion Financials and Project Management 26D. See the [source review](docs/platform/oracle-26d-source-review.md) for release impacts and tenant validation.
 
 On quarterly updates: review Oracle release notes per active domain, update contracts first, then SQL and Power BI metadata, then re-run validations.
 
 ## References
 
-- [Oracle Financials 26B Tables and Views](https://docs.oracle.com/en/cloud/saas/financials/26b/oedmf/index.html)
-- [Oracle Financials 26B OTBI Subject Areas](https://docs.oracle.com/en/cloud/saas/financials/26b/faofb/subject-areas-for-transactional-business-intelligence-in-financials.pdf)
-- [Oracle Financials 26B Books](https://docs.oracle.com/en/cloud/saas/financials/26b/books.html)
+- [Oracle Financials 26D Tables and Views](https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/index.html)
+- [Oracle Financials 26D OTBI Subject Areas](https://docs.oracle.com/en/cloud/saas/financials/26d/faofb/index.html)
+- [Oracle Financials 26D Books](https://docs.oracle.com/en/cloud/saas/financials/26d/books.html)
+- [Oracle Project Management 26D Tables and Views](https://docs.oracle.com/en/cloud/saas/project-management/26d/oedpp/index.html)

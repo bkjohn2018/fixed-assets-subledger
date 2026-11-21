@@ -22,11 +22,11 @@ columns:
   - {name: ACCOUNTED_DISTRIBUTION_COUNT, type: NUMBER}
   - {name: UNACCOUNTED_DISTRIBUTION_COUNT, type: NUMBER}
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   source_path: Aggregated from AP_INVOICE_DISTRIBUTIONS_ALL at INVOICE_ID grain
   purpose: Safe enrichment for aging schedule without row multiplication
 validation_notes:
   - Grain must be unique on INVOICE_ID
   - DISTRIBUTION_TOTAL_AMOUNT is not additive with schedule AMOUNT_REMAINING
   - Merged into ap_aging_schedule BIP extract via LEFT JOIN
-version: 26B
+version: 26D

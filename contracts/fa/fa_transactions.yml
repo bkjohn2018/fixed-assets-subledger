@@ -26,8 +26,8 @@ columns:
 null_rules:
   - {column: GAIN_LOSS, allowed_when: "TRANSACTION_TYPE_CODE NOT IN ('RETIREMENT','REINSTATEMENT')"}
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   otbi_subject_area: Fixed Assets - Asset Transactions Real Time
   documented_grain: asset transaction distribution line (FA_TRX_EXTRACT)
   prerequisite: Run the Extract Assets Reporting Data ESS job before exporting OTBI data.
-version: 26B
+version: 26D

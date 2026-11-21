@@ -30,4 +30,4 @@ Traceability across P2C uses **bridge keys and mapping tables**, not grain-blend
 
 The Projects status snapshot distinguishes generated, held, rejected, transferred, and posted lifecycle states without blending their amounts. A capitalization-candidate flag routes an aged, Oracle-capitalizable item for human review; it does not determine accounting treatment, prove an error, or authorize capitalization.
 
-**Version:** 26B
+**Version:** 26D

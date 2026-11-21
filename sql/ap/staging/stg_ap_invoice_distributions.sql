@@ -1,5 +1,5 @@
 -- Staging: AP invoice distributions (one row per INVOICE_DISTRIBUTION_ID)
--- Source: AP_INVOICE_DISTRIBUTIONS_ALL (Oracle Fusion 26B)
+-- Source: AP_INVOICE_DISTRIBUTIONS_ALL (Oracle Fusion 26D)
 
 WITH distributions AS (
     SELECT

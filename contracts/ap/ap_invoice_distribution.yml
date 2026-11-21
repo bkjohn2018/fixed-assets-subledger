@@ -43,7 +43,7 @@ columns:
   - {name: INVOICE_DATE, type: DATE}
   - {name: ORG_ID, type: NUMBER}
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   source_path: AP_INVOICE_DISTRIBUTIONS_ALL joined to AP_INVOICES_ALL
   join_logic:
     - AP_INVOICE_DISTRIBUTIONS_ALL.INVOICE_ID = AP_INVOICES_ALL.INVOICE_ID
@@ -51,4 +51,4 @@ source_notes:
 validation_notes:
   - Grain must be unique on INVOICE_DISTRIBUTION_ID
   - Do not blend with ap_aging_schedule amounts in the same additive measure
-version: 26B
+version: 26D

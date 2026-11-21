@@ -56,4 +56,4 @@ Purpose: short, actionable guidance to help an AI agent be immediately productiv
 - Small, verifiable changes preferred: run validation scripts after edits.
 
 7) Release & versioning notes
-- Anchored on Oracle release **26B**. Update contracts first, then SQL, then Power BI.
+- Anchored on Oracle release **26D**. Update contracts first, then SQL, then Power BI.

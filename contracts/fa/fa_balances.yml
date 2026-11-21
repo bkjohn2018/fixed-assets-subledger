@@ -22,9 +22,11 @@ columns:
   - {name: NBV_END, type: NUMBER}
   - {name: UNITS, type: NUMBER}
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   otbi_subject_area: Fixed Assets - Asset Balances Real Time
+  source_reference: https://docs.oracle.com/en/cloud/saas/financials/26d/faofb/Fixed-Assets-Asset-Balances-Real-Time-SA-183.html
   documented_source_grain: asset transaction distribution line (FA_BALANCES_EXTRACT)
   extraction_rule: Aggregate OTBI distribution-grain rows to ASSET_ID, BOOK_TYPE_CODE, PERIOD_COUNTER.
   prerequisite: Run the Extract Asset Reporting Data ESS job before exporting OTBI data.
-version: 26B
+  tax_book_refresh: Reconcile affected tax-book reserve and net book value and replace affected historical partitions.
+version: 26D

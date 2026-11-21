@@ -1,6 +1,7 @@
 # Data Lineage
 
 See [`../conceptual/capex-lifecycle.md`](../conceptual/capex-lifecycle.md) for platform scope and [`../conceptual/procure-to-capitalize.md`](../conceptual/procure-to-capitalize.md) for P2C stage map.
+See the [Oracle 26D source review](oracle-26d-source-review.md) for upgrade impacts and tenant checks.
 
 ## Fixed Assets (Capitalize)
 
@@ -8,11 +9,13 @@ Oracle Fixed Assets ESS reporting extract → OTBI (BIP Logical SQL) → CSV par
 
 Later: BICC PVOs → Fabric Lakehouse → same star schema
 
-Oracle 26B documents the Fixed Assets OTBI subject areas as extract-backed:
+Oracle 26D documents the Fixed Assets OTBI subject areas as extract-backed:
 
-- `Fixed Assets - Asset Transactions Real Time`: distribution-line grain via `FA_TRX_EXTRACT`
-- `Fixed Assets - Asset Depreciation Real Time`: depreciation-distribution grain via `FA_DEPRN_EXTRACT`
-- `Fixed Assets - Asset Balances Real Time`: transaction-distribution-line grain via `FA_BALANCES_EXTRACT`
+- Distribution-line grain via `FA_TRX_EXTRACT`. [Asset Transactions Real Time](https://docs.oracle.com/en/cloud/saas/financials/26d/faofb/Fixed-Assets-Asset-Transactions-Real-Time-SA-182.html)
+- Depreciation-distribution grain via `FA_DEPRN_EXTRACT`. [Asset Depreciation Real Time](https://docs.oracle.com/en/cloud/saas/financials/26d/faofb/Fixed-Assets-Asset-Depreciation-Real-Time-SA-181.html)
+- Transaction-distribution-line grain via `FA_BALANCES_EXTRACT`. [Asset Balances Real Time](https://docs.oracle.com/en/cloud/saas/financials/26d/faofb/Fixed-Assets-Asset-Balances-Real-Time-SA-183.html)
+
+Run the Extract Asset Reporting Data ESS process before exporting these subject areas.
 
 Physical artifacts: `contracts/fa/`, `sql/bip/fa/`, `sql/fa/`, `powerbi/queries/fa/`
 
@@ -40,15 +43,15 @@ Do not blend supplier spend history grain with AP aging schedule grain.
 
 Oracle Fusion Projects base tables → BIP direct SQL (`sql/bip/projects/`) → CSV partitions → Power BI model
 
-Verified source-to-FA path:
+The Projects-to-Assets handoff sends each asset line to Assets as a mass addition. The status extract joins and aggregates interface evidence and posted source lines independently by `PROJECT_ASSET_LINE_ID`. [How Project Costing source lines are imported](https://docs.oracle.com/en/cloud/saas/financials/26d/faalm/how-project-costing-source-lines-are-imported.html)
 
 ```text
 PJC_COST_DIST_LINES_ALL
   -> PJC_PRJ_ASSET_LN_DETS
-  -> PJC_PRJ_ASSET_LNS_ALL / PJC_PRJ_ASSETS_ALL
-  -> FA_MASS_ADDITIONS
-  -> FA_ASSET_INVOICES
-  -> ASSET_ID
+  -> PJC_PRJ_ASSET_LNS_ALL
+       -> PJC_PRJ_ASSETS_ALL (project asset context)
+       -> FA_MASS_ADDITIONS (interface evidence)
+       -> FA_ASSET_INVOICES (posted evidence and ASSET_ID)
 ```
 
 Dataset ownership preserves each source grain:

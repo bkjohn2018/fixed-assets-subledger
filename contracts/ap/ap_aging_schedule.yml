@@ -67,13 +67,14 @@ columns:
   - {name: PROJECT_COUNT, type: NUMBER}
   - {name: PO_DISTRIBUTION_COUNT, type: NUMBER}
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   source_path: AP_PAYMENT_SCHEDULES_ALL joined to AP_INVOICES_ALL; enriched by invoice-level distribution bridge
   join_logic:
     - AP_PAYMENT_SCHEDULES_ALL.INVOICE_ID = AP_INVOICES_ALL.INVOICE_ID
     - bridge on AP_INVOICES_ALL.INVOICE_ID only (no join to AP_INVOICE_DISTRIBUTIONS_ALL at schedule grain)
   open_amount: AMOUNT_REMAINING on payment schedule; filter COALESCE(AMOUNT_REMAINING, 0) <> 0
   parameter: :as_of_date or @AS_OF_DATE for BIP
+  snapshot_timing: AS_OF_DATE determines aging buckets. AMOUNT_REMAINING reflects source state at extract time. Use retained snapshots for historical open balances.
   anti_pattern: Do not join payment schedules to invoice distributions and sum AMOUNT_REMAINING
 validation_notes:
   - Grain must be unique on INVOICE_ID, PAYMENT_NUM, AS_OF_DATE
@@ -81,4 +82,4 @@ validation_notes:
   - LEFT JOIN bridge must not change SUM(AMOUNT_REMAINING)
   - Run sql/ap/diagnostics/ap_aging_reconciliation_checks.sql after extract
   - Profile INVOICE_TYPE_LOOKUP_CODE before finalizing credit memo CASE logic
-version: 26B
+version: 26D

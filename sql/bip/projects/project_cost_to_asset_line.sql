@@ -1,5 +1,5 @@
 -- BIP extract: non-additive cost-to-asset-line lineage bridge
--- Grain: PROJ_ASSET_LINE_DTL_UNIQ_ID
+-- Grain: PROJ_ASSET_LINE_DTL_UNIQ_ID + PROJECT_ASSET_LINE_ID
 -- Split asset lines legitimately repeat a cost distribution across asset lines.
 
 WITH bridge_rows AS (

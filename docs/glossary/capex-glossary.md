@@ -13,4 +13,4 @@
 | **Bridge column** | Non-additive classification field linking facts at different grains |
 | **Contract** | YAML declaration of grain, primary key, and columns; logical layer source of truth |
 
-**Version:** 26B
+**Version:** 26D

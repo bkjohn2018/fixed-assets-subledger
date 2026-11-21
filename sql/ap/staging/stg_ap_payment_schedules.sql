@@ -1,5 +1,5 @@
 -- Staging: AP payment schedules (one row per INVOICE_ID + PAYMENT_NUM)
--- Source: AP_PAYMENT_SCHEDULES_ALL (Oracle Fusion 26B)
+-- Source: AP_PAYMENT_SCHEDULES_ALL (Oracle Fusion 26D)
 
 WITH payment_schedules AS (
     -- Preserve downstream output column order.

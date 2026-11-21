@@ -17,9 +17,11 @@ columns:
   - {name: DEPRN_YTD, type: NUMBER}
   - {name: DEPRN_ITD, type: NUMBER}
 source_notes:
-  oracle_release: 26B
+  oracle_release: 26D
   otbi_subject_area: Fixed Assets - Asset Depreciation Real Time
+  source_reference: https://docs.oracle.com/en/cloud/saas/financials/26d/faofb/Fixed-Assets-Asset-Depreciation-Real-Time-SA-181.html
   documented_source_grain: asset depreciation distribution (FA_DEPRN_EXTRACT)
   extraction_rule: Aggregate OTBI distribution-grain rows to ASSET_ID, BOOK_TYPE_CODE, PERIOD_COUNTER.
   prerequisite: Run the Extract Asset Reporting Data ESS job before exporting OTBI data.
-version: 26B
+  tax_book_refresh: Reconcile and replace affected historical tax-book partitions after a prior-year depreciation adjustment.
+version: 26D
